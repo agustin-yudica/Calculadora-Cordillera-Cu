@@ -1,0 +1,290 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>VAN en función del precio del cobre</title>
+<style>
+  :root {
+    color-scheme: light;
+    --surface:      #fcfcfb;
+    --page:         #f9f9f7;
+    --ink:          #0b0b0b;
+    --ink-2:        #52514e;
+    --muted:        #898781;
+    --grid:         #e1e0d9;
+    --baseline:     #c3c2b7;
+    --pos:          #2a78d6;
+    --pos-fill:     rgba(42,120,214,0.10);
+    --neg:          #d03b3b;
+    --neg-fill:     rgba(208,59,59,0.09);
+    --accent:       #eb6834;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --surface:      #1a1a19;
+      --page:         #0d0d0d;
+      --ink:          #ffffff;
+      --ink-2:        #c3c2b7;
+      --muted:        #898781;
+      --grid:         #2c2c2a;
+      --baseline:     #383835;
+      --pos:          #3987e5;
+      --pos-fill:     rgba(57,135,229,0.14);
+      --neg:          #e66767;
+      --neg-fill:     rgba(230,103,103,0.12);
+      --accent:       #d95926;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --surface:      #1a1a19;
+    --page:         #0d0d0d;
+    --ink:          #ffffff;
+    --ink-2:        #c3c2b7;
+    --muted:        #898781;
+    --grid:         #2c2c2a;
+    --baseline:     #383835;
+    --pos:          #3987e5;
+    --pos-fill:     rgba(57,135,229,0.14);
+    --neg:          #e66767;
+    --neg-fill:     rgba(230,103,103,0.12);
+    --accent:       #d95926;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--page);
+    font-family: system-ui, -apple-system, "Segoe UI", sans-serif;
+    color: var(--ink);
+    display: flex;
+    justify-content: center;
+    padding: 24px 16px;
+  }
+  .card {
+    background: var(--surface);
+    border-radius: 16px;
+    padding: 24px 24px 16px;
+    max-width: 800px;
+    width: 100%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.08);
+  }
+  h1 {
+    font-size: 18px;
+    margin: 0 0 4px;
+    font-weight: 600;
+  }
+  .sub {
+    font-size: 13px;
+    color: var(--ink-2);
+    margin: 0 0 18px;
+    line-height: 1.5;
+  }
+  .sub code {
+    background: var(--grid);
+    padding: 1px 5px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .axis-label { fill: var(--muted); font-size: 12px; }
+  .tick-label { fill: var(--muted); font-size: 11px; }
+  .grid-line { stroke: var(--grid); stroke-width: 1; }
+  .baseline { stroke: var(--baseline); stroke-width: 1.5; stroke-dasharray: 4 3; }
+  .legend { font-size: 12px; fill: var(--ink-2); }
+  #hoverGroup { pointer-events: none; opacity: 0; transition: opacity .1s; }
+  #hoverGroup.show { opacity: 1; }
+  .crosshair { stroke: var(--muted); stroke-width: 1; stroke-dasharray: 3 3; }
+  .tooltip-bg { fill: var(--surface); stroke: var(--baseline); stroke-width: 1; }
+  .tooltip-text { fill: var(--ink); font-size: 12px; }
+  .tooltip-text.small { fill: var(--ink-2); font-size: 11px; }
+  #captureArea { fill: transparent; cursor: crosshair; }
+  .note {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 10px;
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+<div class="card">
+  <h1>VAN del proyecto en función del precio del cobre</h1>
+  <p class="sub">Caso Base — Vida de mina 15 años, WACC 10%. VAN(Precio) = <code>m·Precio + b</code>, con m = NPV de 'a' y b = CAPEX + NPV de 'b' (Valuation!B23 / B24 / B25). Pasá el mouse sobre la recta para ver el VAN a cualquier precio.</p>
+
+  <svg id="chart" viewBox="0 0 760 470" xmlns="http://www.w3.org/2000/svg">
+    <!-- gridlines horizontal -->
+    <g id="hgrid"></g>
+    <!-- gridlines vertical -->
+    <g id="vgrid"></g>
+
+    <!-- zero baseline -->
+    <line x1="70" y1="244.63" x2="730" y2="244.63" class="baseline"></line>
+    <text x="735" y="248" class="tick-label">$0</text>
+
+    <!-- area fills -->
+    <path id="negFill" fill="var(--neg-fill)"></path>
+    <path id="posFill" fill="var(--pos-fill)"></path>
+
+    <!-- line segments -->
+    <line id="negLine" stroke="var(--neg)" stroke-width="2.5" stroke-linecap="round"></line>
+    <line id="posLine" stroke="var(--pos)" stroke-width="2.5" stroke-linecap="round"></line>
+
+    <!-- breakeven marker -->
+    <g id="breakevenMark">
+      <line x1="374.83" y1="244.63" x2="374.83" y2="430" class="grid-line" stroke-dasharray="2 3"></line>
+      <circle cx="374.83" cy="244.63" r="5" fill="var(--surface)" stroke="var(--ink)" stroke-width="2"></circle>
+      <text x="374.83" y="450" text-anchor="middle" class="tick-label" font-weight="600">$2,85</text>
+      <text x="380" y="228" class="legend" font-weight="600">Precio de equilibrio (VAN = $0)</text>
+    </g>
+
+    <!-- actual price marker -->
+    <g id="actualMark">
+      <line x1="598" y1="118.9" x2="598" y2="430" class="grid-line" stroke-dasharray="2 3"></line>
+      <circle cx="598" cy="118.9" r="5" fill="var(--accent)" stroke="var(--surface)" stroke-width="1.5"></circle>
+      <text x="598" y="450" text-anchor="middle" class="tick-label" font-weight="600">$4,20</text>
+      <text x="604" y="105" class="legend" font-weight="600" fill="var(--accent)">Precio actual → VAN ≈ $644,4 M</text>
+    </g>
+
+    <!-- axes -->
+    <line x1="70" y1="30" x2="70" y2="430" stroke="var(--baseline)" stroke-width="1.5"></line>
+    <line x1="70" y1="430" x2="730" y2="430" stroke="var(--baseline)" stroke-width="1.5"></line>
+    <text x="400" y="466" text-anchor="middle" class="axis-label">Precio del cobre (USD/lb)</text>
+    <text x="20" y="230" text-anchor="middle" class="axis-label" transform="rotate(-90 20 230)">VAN (millones USD)</text>
+
+    <!-- hover layer -->
+    <g id="hoverGroup">
+      <line id="crossV" class="crosshair"></line>
+      <circle id="hoverDot" r="5" fill="var(--ink)"></circle>
+      <g id="tooltip">
+        <rect class="tooltip-bg" rx="6" ry="6" width="150" height="46"></rect>
+        <text id="ttPrice" class="tooltip-text" x="10" y="18" font-weight="600"></text>
+        <text id="ttVan" class="tooltip-text small" x="10" y="35"></text>
+      </g>
+    </g>
+
+    <rect id="captureArea" x="70" y="30" width="660" height="400"></rect>
+  </svg>
+
+  <p class="note">La recta es válida mientras el EBIT de cada año se mantenga positivo al precio evaluado (condición que se cumple en todo este rango) — ver la explicación de por qué el modelo usa impuestos con un piso en cero.</p>
+</div>
+
+<script>
+(function(){
+  var m = 476.4384597478558;   // millones USD por cada $1/lb
+  var b = -1356.6499158712857; // millones USD (VAN a precio hipotético $0)
+  var P0 = 1.0, P1 = 5.0;
+  var Y0 = -950, Y1 = 1100;
+  var L = 70, R = 730, T = 30, B = 430;
+  var W = R - L, H = B - T;
+
+  function xpx(p){ return L + (p-P0)/(P1-P0)*W; }
+  function ypx(v){ return T + (Y1-v)/(Y1-Y0)*H; }
+  function pxToPrice(x){ return P0 + (x-L)/W*(P1-P0); }
+  function van(p){ return m*p + b; }
+
+  var breakeven = -b/m;
+  var y0px = ypx(0);
+
+  // gridlines
+  var hgrid = document.getElementById('hgrid');
+  [-800,-400,0,400,800].forEach(function(v){
+    if (v===0) return; // baseline already drawn separately
+    var y = ypx(v);
+    var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',L); line.setAttribute('x2',R);
+    line.setAttribute('y1',y); line.setAttribute('y2',y);
+    line.setAttribute('class','grid-line');
+    hgrid.appendChild(line);
+    var t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', L-10); t.setAttribute('y', y+4);
+    t.setAttribute('text-anchor','end'); t.setAttribute('class','tick-label');
+    t.textContent = (v>0?'+':'') + v.toLocaleString('es-AR') + ' M';
+    hgrid.appendChild(t);
+  });
+  var vgrid = document.getElementById('vgrid');
+  var xBEforGrid = xpx(breakeven);
+  [1,2,3,4,5].forEach(function(p){
+    var x = xpx(p);
+    var line = document.createElementNS('http://www.w3.org/2000/svg','line');
+    line.setAttribute('x1',x); line.setAttribute('x2',x);
+    line.setAttribute('y1',T); line.setAttribute('y2',B);
+    line.setAttribute('class','grid-line');
+    vgrid.appendChild(line);
+    // skip the tick label when it would collide with the bold breakeven price label
+    if (Math.abs(x - xBEforGrid) < 32) return;
+    var t = document.createElementNS('http://www.w3.org/2000/svg','text');
+    t.setAttribute('x', x); t.setAttribute('y', B+20);
+    t.setAttribute('text-anchor','middle'); t.setAttribute('class','tick-label');
+    t.textContent = '$' + p.toFixed(0);
+    vgrid.appendChild(t);
+  });
+
+  // line segments split at breakeven
+  var xBE = xpx(breakeven);
+  var x1 = xpx(P0), y1 = ypx(van(P0));
+  var x2 = xpx(P1), y2 = ypx(van(P1));
+
+  var negLine = document.getElementById('negLine');
+  negLine.setAttribute('x1',x1); negLine.setAttribute('y1',y1);
+  negLine.setAttribute('x2',xBE); negLine.setAttribute('y2',y0px);
+
+  var posLine = document.getElementById('posLine');
+  posLine.setAttribute('x1',xBE); posLine.setAttribute('y1',y0px);
+  posLine.setAttribute('x2',x2); posLine.setAttribute('y2',y2);
+
+  // fills (area between line and zero)
+  var negFill = document.getElementById('negFill');
+  negFill.setAttribute('d', 'M'+x1+','+y0px+' L'+x1+','+y1+' L'+xBE+','+y0px+' Z');
+  var posFill = document.getElementById('posFill');
+  posFill.setAttribute('d', 'M'+xBE+','+y0px+' L'+x2+','+y2+' L'+x2+','+y0px+' Z');
+
+  // hover interaction
+  var svg = document.getElementById('chart');
+  var capture = document.getElementById('captureArea');
+  var hoverGroup = document.getElementById('hoverGroup');
+  var crossV = document.getElementById('crossV');
+  var hoverDot = document.getElementById('hoverDot');
+  var tooltip = document.getElementById('tooltip');
+  var ttPrice = document.getElementById('ttPrice');
+  var ttVan = document.getElementById('ttVan');
+
+  function fmt(n, dec){
+    return n.toLocaleString('es-AR', {minimumFractionDigits: dec, maximumFractionDigits: dec});
+  }
+
+  function handleMove(evt){
+    var pt = svg.createSVGPoint();
+    var rect = svg.getBoundingClientRect();
+    var scaleX = 760 / rect.width;
+    var clientX = (evt.touches ? evt.touches[0].clientX : evt.clientX);
+    var xSvg = (clientX - rect.left) * scaleX;
+    var xClamped = Math.max(L, Math.min(R, xSvg));
+    var price = pxToPrice(xClamped);
+    var v = van(price);
+    var yv = ypx(v);
+
+    crossV.setAttribute('x1', xClamped); crossV.setAttribute('x2', xClamped);
+    crossV.setAttribute('y1', T); crossV.setAttribute('y2', B);
+    hoverDot.setAttribute('cx', xClamped); hoverDot.setAttribute('cy', yv);
+    hoverDot.setAttribute('fill', v >= 0 ? 'var(--pos)' : 'var(--neg)');
+
+    var boxX = xClamped + 12;
+    if (boxX + 150 > R) boxX = xClamped - 162;
+    var boxY = Math.max(T, Math.min(yv - 46, B - 46));
+    tooltip.setAttribute('transform', 'translate('+boxX+','+boxY+')');
+    ttPrice.textContent = 'Precio: $' + fmt(price,2) + '/lb';
+    ttVan.textContent = 'VAN: ' + (v>=0?'+':'') + '$' + fmt(v,1) + ' M';
+
+    hoverGroup.classList.add('show');
+  }
+
+  capture.addEventListener('mousemove', handleMove);
+  capture.addEventListener('touchmove', function(e){ handleMove(e); e.preventDefault(); }, {passive:false});
+  capture.addEventListener('mouseleave', function(){ hoverGroup.classList.remove('show'); });
+  capture.addEventListener('touchend', function(){ hoverGroup.classList.remove('show'); });
+})();
+</script>
+</body>
+</html>
