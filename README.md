@@ -1,4 +1,4 @@
-# Calculadora Cordillera Cu
+# Cordillera Cu Model
 
 Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordillera Cu"), con una calculadora web para simular escenarios.
 
