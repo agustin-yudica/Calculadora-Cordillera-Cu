@@ -1,0 +1,1722 @@
+<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
+<title>Calculadora Cordillera Cu</title>
+<style>
+  :root{
+    --bg:#FAF3EA; --surface:#FFFCF7; --surface-2:#F2E6D3;
+    --text:#2B1D12; --text-2:#6E5942; --muted:#A08D74;
+    --border:#E6D6BE; --grid:#EFE3D0;
+    --accent:#B4652A; --accent-strong:#8C4E1F; --accent-soft:#F0DCC9;
+    --good:#3D8B3F; --warning:#D98A2E; --serious:#C2622E; --critical:#C0392B;
+    --good-wash:#E4EFDD; --critical-wash:#F5E1DC;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark){
+    :root:not([data-theme="light"]){
+      --bg:#1C140D; --surface:#251B12; --surface-2:#2E2116;
+      --text:#F3E9DC; --text-2:#CBB89E; --muted:#9C8768;
+      --border:#3B2C1D; --grid:#332619;
+      --accent:#E0904A; --accent-strong:#F0A868; --accent-soft:#3F2C18;
+      --good:#4F9A4A; --critical:#D14A36;
+      --good-wash:#24361F; --critical-wash:#3A2119;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"]{
+    --bg:#1C140D; --surface:#251B12; --surface-2:#2E2116;
+    --text:#F3E9DC; --text-2:#CBB89E; --muted:#9C8768;
+    --border:#3B2C1D; --grid:#332619;
+    --accent:#E0904A; --accent-strong:#F0A868; --accent-soft:#3F2C18;
+    --good:#4F9A4A; --critical:#D14A36;
+    --good-wash:#24361F; --critical-wash:#3A2119;
+    color-scheme: dark;
+  }
+
+  *{ box-sizing:border-box; }
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:"IBM Plex Sans", system-ui, -apple-system, sans-serif;
+    padding-inline:16px;
+  }
+  .wrap{ max-width:1120px; margin:0 auto; padding-block:20px 48px; }
+
+  .eyebrow{
+    font-family:"Barlow Condensed", sans-serif; text-transform:uppercase;
+    letter-spacing:.12em; font-size:12.5px; color:var(--accent-strong); font-weight:700;
+  }
+  h1{
+    font-family:"Barlow Condensed", sans-serif; font-weight:700;
+    font-size:clamp(28px,4vw,40px); line-height:1.05; margin:2px 0 6px; text-wrap:balance;
+  }
+  .subtitle{ color:var(--text-2); font-size:14.5px; max-width:62ch; line-height:1.5; margin:0; }
+  .byline{ color:var(--muted); font-size:12px; margin:8px 0 0; }
+
+  header.top{
+    display:flex; flex-wrap:wrap; gap:16px; align-items:flex-end; justify-content:space-between;
+    padding-block:4px 18px; border-bottom:1px solid var(--border); margin-bottom:20px;
+  }
+
+  .scenario-row{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
+  .pill{
+    font-family:"Barlow Condensed", sans-serif; font-weight:600; font-size:15px; letter-spacing:.02em;
+    padding:8px 16px; border-radius:999px; border:1px solid var(--border); background:var(--surface);
+    color:var(--text-2); cursor:pointer; transition:background .15s, color .15s, border-color .15s;
+  }
+  .pill:hover{ border-color:var(--accent); color:var(--text); }
+  .pill.active{ background:var(--accent); border-color:var(--accent); color:#fff; }
+  .pill-comparativa{ margin-left:14px; padding-left:16px; border-left:1px dashed var(--border); }
+  .reset-btn{
+    font-family:"IBM Plex Sans"; font-size:13px; color:var(--text-2); background:none;
+    border:1px solid var(--border); border-radius:8px; padding:8px 12px; cursor:pointer;
+  }
+  .reset-btn:hover{ border-color:var(--accent); color:var(--accent-strong); }
+  .lang-select{
+    font-family:"IBM Plex Sans"; font-size:13px; color:var(--text); background:var(--surface);
+    border:1px solid var(--border); border-radius:8px; padding:8px 10px; cursor:pointer;
+    flex-shrink:0;
+  }
+
+  .stat-grid{
+    display:grid; grid-template-columns:repeat(3,1fr); gap:12px;
+  }
+  .sticky-head{
+    position:sticky; top:env(safe-area-inset-top, 0px); z-index:30; background:var(--bg);
+    padding-block:10px 12px; margin-bottom:16px; box-shadow:0 6px 14px -10px rgba(0,0,0,.25);
+    display:flex; flex-direction:column; gap:12px;
+  }
+  .stat{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:16px 16px 14px; display:flex; flex-direction:column; gap:6px; min-width:0;
+  }
+  .stat .label{ font-size:12px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; }
+  .stat .value{
+    font-family:"IBM Plex Mono", monospace; font-size:clamp(19px,2.6vw,26px); font-weight:600;
+    font-variant-numeric:tabular-nums; line-height:1.15; overflow-wrap:anywhere;
+  }
+  .stat .sub{ font-size:12px; color:var(--text-2); }
+  .stat.good .value{ color:var(--good); }
+  .stat.critical .value{ color:var(--critical); }
+  .rowlabel .formula{ display:block; font-weight:400; font-size:12px; color:var(--text-2); margin-top:2px; }
+  .van-warn{ color:var(--critical); margin-left:6px; font-size:13px; cursor:help; text-transform:none; letter-spacing:0; }
+  .field .readout.over{ color:var(--critical); }
+  .field .base-val.reservas-warn{ color:var(--critical); font-size:12px; line-height:1.4; }
+
+  .panel{
+    background:var(--surface); border:1px solid var(--border); border-radius:14px;
+    padding:18px 18px 16px; margin-bottom:16px;
+  }
+  .panel h2{
+    font-family:"Barlow Condensed", sans-serif; font-size:19px; font-weight:700;
+    margin:0 0 4px; letter-spacing:.01em;
+  }
+  .hint-list{ display:flex; flex-direction:column; gap:2px; margin:0 0 14px; }
+  .panel .hint-list .hint{ margin:0; }
+  .panel .hint{ font-size:12.5px; color:var(--muted); margin:0 0 14px; line-height:1.5; max-width:70ch; }
+
+  .chart-note{ font-size:12px; color:var(--muted); margin-top:6px; }
+
+  .chart-legend{ display:flex; flex-wrap:wrap; gap:14px; align-items:center; margin-bottom:8px; }
+  .legend-item{ display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-2); }
+  .swatch{ width:10px; height:10px; border-radius:2px; display:inline-block; }
+  .swatch-line{ width:14px; height:2px; border-radius:1px; background:var(--accent); }
+  .swatch-dot{ width:9px; height:9px; border-radius:50%; background:var(--accent-strong); }
+
+  .input-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:16px; }
+  #costosFinGrid{ grid-template-columns:repeat(2,1fr); }
+  .field{ display:flex; flex-direction:column; gap:6px; }
+  .field .field-top{ display:flex; justify-content:space-between; align-items:baseline; gap:8px; flex-wrap:wrap; }
+  .field label{ font-size:13.5px; font-weight:600; color:var(--text); }
+  .field .readout{
+    font-family:"IBM Plex Mono", monospace; font-size:13px; color:var(--accent-strong);
+    font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  .field .readout .shock{ color:var(--muted); font-size:11.5px; }
+  input[type="range"]{
+    -webkit-appearance:none; appearance:none; width:100%; height:4px; border-radius:2px;
+    background:var(--grid); outline:none; margin:4px 0;
+  }
+  input[type="range"]::-webkit-slider-thumb{
+    -webkit-appearance:none; width:16px; height:16px; border-radius:50%;
+    background:var(--accent); border:2px solid var(--surface); box-shadow:0 0 0 1px var(--accent);
+    cursor:pointer;
+  }
+  input[type="range"]::-moz-range-thumb{
+    width:16px; height:16px; border-radius:50%; background:var(--accent);
+    border:2px solid var(--surface); box-shadow:0 0 0 1px var(--accent); cursor:pointer;
+  }
+  .field .base-val{ font-size:11.5px; color:var(--muted); }
+  .ramp-panel .base-val{ display:block; font-size:11.5px; color:var(--muted); margin:2px 0 8px; }
+
+  .ramp-panel .ramp-row{
+    display:grid; grid-template-columns:repeat(15,minmax(44px,1fr)); gap:6px; margin-top:6px;
+  }
+  .ramp-cell{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .ramp-cell label{ font-size:10.5px; color:var(--muted); font-family:"IBM Plex Mono",monospace; }
+  .ramp-cell input{
+    width:100%; text-align:center; font-family:"IBM Plex Mono",monospace; font-size:12.5px;
+    padding:5px 2px; border-radius:6px; border:1px solid var(--border); background:var(--surface-2);
+    color:var(--text); font-variant-numeric:tabular-nums;
+  }
+  .ramp-cell input:focus{ outline:2px solid var(--accent); outline-offset:1px; }
+  .ramp-curve{ margin-top:12px; }
+
+  svg text{ font-family:"IBM Plex Mono", monospace; }
+  .bar{ transition:opacity .1s; }
+  .bar:hover{ opacity:.75; }
+  .tooltip{
+    position:absolute; pointer-events:none; background:var(--text); color:var(--bg);
+    font-family:"IBM Plex Mono",monospace; font-size:11.5px; padding:5px 8px; border-radius:6px;
+    transform:translate(-50%,-115%); white-space:nowrap; opacity:0; transition:opacity .1s;
+    font-variant-numeric:tabular-nums;
+  }
+  .chart-wrap{ position:relative; }
+
+  .summary-scroll{ overflow-x:auto; -webkit-overflow-scrolling:touch; }
+  .summary-table{
+    width:100%; min-width:560px; border-collapse:collapse; font-size:13px;
+  }
+  .summary-table th, .summary-table td{
+    padding:10px 12px; text-align:right; border-bottom:1px solid var(--border);
+    font-family:"IBM Plex Mono", monospace; font-variant-numeric:tabular-nums; white-space:nowrap;
+  }
+  .summary-table th{
+    font-family:"Barlow Condensed", sans-serif; font-weight:700; font-size:14.5px;
+    color:var(--text-2); border-bottom:1px solid var(--border);
+  }
+  .summary-table .rowlabel{
+    text-align:left; font-family:"IBM Plex Sans", sans-serif; font-weight:600; font-size:13px;
+    color:var(--text); white-space:normal;
+  }
+  .summary-table tr.subhead td{
+    background:var(--surface-2); font-family:"Barlow Condensed", sans-serif; font-weight:700;
+    font-size:11.5px; text-transform:uppercase; letter-spacing:.08em; color:var(--muted);
+    padding:7px 12px; white-space:nowrap;
+  }
+  .summary-table th.active, .summary-table td.active{ background:var(--accent-soft); }
+  .summary-table .active-tag{ font-size:10.5px; font-weight:600; color:var(--accent-strong); font-family:"IBM Plex Sans",sans-serif; text-transform:none; letter-spacing:0; margin-left:4px; }
+  .summary-table td.good{ color:var(--good); }
+  .summary-table td.critical{ color:var(--critical); }
+  .mobile-scroll-hint{ display:none; }
+
+  .sync-panel{ border-style:dashed; }
+  .sync-row{ display:flex; flex-wrap:wrap; align-items:center; gap:12px; }
+  .sync-status{ font-size:12.5px; color:var(--muted); line-height:1.5; }
+  .sync-status.ok{ color:var(--good); }
+  .sync-status.error{ color:var(--critical); }
+
+  footer.note{
+    font-size:12px; color:var(--muted); line-height:1.6; border-top:1px solid var(--border);
+    padding-top:14px; margin-top:8px;
+  }
+
+  @media (max-width:760px){
+    .stat-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); gap:6px; }
+    .stat .value{ font-size:clamp(14px,4.2vw,20px); }
+    .sticky-head{ padding-block:8px 8px; gap:8px; margin-bottom:12px; }
+    .sticky-head .scenario-row{ flex-wrap:nowrap; overflow-x:auto; padding-bottom:2px; }
+    .sticky-head .scenario-row > button{ flex-shrink:0; white-space:nowrap; }
+    .stat{ padding:10px 12px 8px; gap:3px; }
+    .stat .label{ font-size:10.5px; }
+    .stat .sub{ font-size:10.5px; }
+    .input-grid{ grid-template-columns:1fr; }
+    #costosFinGrid{ grid-template-columns:1fr; }
+    .ramp-panel .ramp-row{ grid-template-columns:repeat(5,minmax(0,1fr)); gap:5px; }
+    .ramp-cell input{ padding:5px 1px; font-size:11.5px; }
+    .mobile-scroll-hint{ display:block; }
+  }
+  @media (max-width:480px){
+    .sticky-head .stat .sub{ display:none; }
+    .sticky-head .stat{ padding:8px 8px 7px; }
+  }
+  @media (max-width:340px){
+    .ramp-panel .ramp-row{ grid-template-columns:repeat(4,minmax(0,1fr)); }
+    .stat-grid{ grid-template-columns:repeat(3,minmax(0,1fr)); }
+  }
+</style>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<script src="xlsx.core.min.js"></script>
+
+<div class="wrap">
+  <header class="top">
+    <div>
+      <div class="eyebrow" data-i18n="eyebrow">Proyecto Cordillera Cu · Calculadora de escenarios</div>
+      <h1 data-i18n="h1">¿Cómo le va al proyecto bajo tus supuestos?</h1>
+      <p class="subtitle" data-i18n="subtitle">Simulá el pórfido de cobre Cordillera con tus propios parámetros — capacidad de planta, precio, ley y recuperación año a año, CAPEX, OPEX y tasa de impuesto — y mirá en vivo el VAN, la TIR y el Payback.</p>
+      <p class="byline" data-i18n="byline">Por Agustín Yúdica · agustinyudica@gmail.com</p>
+    </div>
+    <select id="langSelect" class="lang-select" aria-label="Idioma / Language">
+      <option value="es">Español</option>
+      <option value="en">English</option>
+    </select>
+  </header>
+
+  <div class="panel sync-panel" id="syncPanel">
+    <h2 data-i18n="sync_h2">Vincular con tu Excel</h2>
+    <p class="hint" data-i18n="sync_hint">Cargá tu archivo Cordillera_Cu_Model.xlsx para traer los supuestos exactos del modelo (en vez de aproximarlos con el control deslizante). El archivo se lee acá mismo, en tu navegador — nunca se sube a ningún servidor. Si después modificás el Excel, hacé clic de nuevo en el botón y volvé a elegir el archivo para actualizar.</p>
+    <div class="sync-row">
+      <button class="reset-btn" id="syncBtn" data-i18n="sync_button">Cargar desde Excel</button>
+      <input type="file" id="syncFileInput" accept=".xlsx" style="display:none">
+      <span class="sync-status" id="syncStatus">Todavía no se cargó ningún archivo — se están usando los supuestos por defecto de esta calculadora.</span>
+    </div>
+  </div>
+
+  <div class="sticky-head" id="stickyHead">
+  <div class="scenario-row">
+    <button class="pill active" data-scenario="base" data-i18n="scn_base">Base</button>
+    <button class="pill" data-scenario="optimista" data-i18n="scn_optimista">Optimista</button>
+    <button class="pill" data-scenario="pesimista" data-i18n="scn_pesimista">Pesimista</button>
+    <button class="pill" data-scenario="personalizado" data-i18n="scn_personalizado">Personalizado</button>
+    <button class="pill pill-comparativa" data-scenario="comparativa" data-i18n="tab_comparativa">Comparativa anual</button>
+    <button class="reset-btn" id="resetBtn" style="margin-left:auto;" data-i18n="resetBtn">Restablecer escenario actual</button>
+  </div>
+
+  <div class="stat-grid" id="statGrid">
+    <div class="stat" id="statVan">
+      <div class="label"><span data-i18n="stat_van_label">VAN</span><span class="van-warn" id="vanWarn" role="img" tabindex="0" hidden>⚠</span></div>
+      <div class="value" id="valVan">–</div>
+      <div class="sub" id="subVan">a WACC 10.0%</div>
+    </div>
+    <div class="stat" id="statTir">
+      <div class="label" data-i18n="stat_tir_label">TIR</div>
+      <div class="value" id="valTir">–</div>
+      <div class="sub" id="subTir">vs. WACC 10.0%</div>
+    </div>
+    <div class="stat" id="statPayback">
+      <div class="label" data-i18n="stat_payback_label">Payback simple</div>
+      <div class="value" id="valPayback">–</div>
+      <div class="sub" data-i18n="stat_payback_sub">años hasta recuperar el CAPEX</div>
+    </div>
+  </div>
+  </div>
+
+  <div class="panel" id="chartPanel">
+    <h2 data-i18n="chart_h2">Flujo de caja libre, año por año</h2>
+    <div class="hint-list">
+      <p class="hint" data-i18n="chart_hint">Año 0 es el desembolso de CAPEX</p>
+      <p class="hint" data-i18n="chart_hint_pos">Verde = flujo positivo ese año</p>
+      <p class="hint" data-i18n="chart_hint_neg">Rojo = flujo negativo de ese año</p>
+    </div>
+    <div class="chart-legend">
+      <span class="legend-item"><span class="swatch swatch-line"></span><span data-i18n="chart_legend_cumulative">Flujo acumulado</span></span>
+      <span class="legend-item"><span class="swatch swatch-dot"></span><span data-i18n="chart_legend_payback">Payback</span></span>
+    </div>
+    <div class="chart-wrap" id="chartWrap"></div>
+    <p class="chart-note" data-i18n="chart_note">Vida de mina fija en 15 años con el ramp-up de abajo — igual simplificación que en el modelo de Excel.</p>
+    <p class="chart-note" data-i18n="chart_note2">Los montos debajo de cada barra están expresados en miles de USD.</p>
+  </div>
+
+  <div class="panel" id="prodPanel">
+    <h2 data-i18n="prod_h2">Producción</h2>
+    <p class="hint" data-i18n="prod_hint">Definí las toneladas procesadas (capacidad nominal de planta) y la curva de ramp-up que se aplica cada año.</p>
+    <div class="input-grid" style="grid-template-columns:1fr;">
+      <div class="field">
+        <div class="field-top">
+          <label for="inTon" data-i18n="lbl_ton">Toneladas procesadas (% vs. base)</label>
+          <span class="readout" id="outTon">0%</span>
+        </div>
+        <span class="base-val" id="baseTon">Base: 10.0 Mt/año</span>
+        <input type="range" id="inTon" min="-30" max="30" step="1" value="0">
+      </div>
+    </div>
+    <div class="ramp-panel">
+      <div class="field-top" style="margin-top:14px;">
+        <label data-i18n="lbl_ramp_header">Capacidad de planta por año (% del nominal)</label>
+      </div>
+      <div class="ramp-row" id="rampRow"></div>
+      <div class="ramp-curve"><svg id="rampSvg" width="100%" height="46" viewBox="0 0 600 46" preserveAspectRatio="none"></svg></div>
+    </div>
+  </div>
+
+  <div class="panel" id="mercadoPanel">
+    <h2 data-i18n="mercado_h2">Mercado</h2>
+    <p class="hint" data-i18n="mercado_hint">Supuestos de precio y calidad del yacimiento, por año.</p>
+    <div class="ramp-panel">
+      <div class="field-top">
+        <label data-i18n="lbl_precio_curve">Precio del cobre, por año (USD/lb)</label>
+      </div>
+      <span class="base-val" id="baseValPrecio">Base: $4.20/lb</span>
+      <div class="ramp-row" id="precioRow"></div>
+      <div class="ramp-curve"><svg id="precioSvg" width="100%" height="46" viewBox="0 0 600 46" preserveAspectRatio="none"></svg></div>
+    </div>
+    <div class="ramp-panel" style="margin-top:18px;">
+      <div class="field-top">
+        <label data-i18n="lbl_ley_curve">Ley de cobre, por año (% Cu, head grade)</label>
+      </div>
+      <span class="base-val" id="baseValLey">Base: 0.550% Cu</span>
+      <div class="ramp-row" id="leyRow"></div>
+      <div class="ramp-curve"><svg id="leySvg" width="100%" height="46" viewBox="0 0 600 46" preserveAspectRatio="none"></svg></div>
+    </div>
+    <div class="ramp-panel" style="margin-top:18px;">
+      <div class="field-top">
+        <label data-i18n="lbl_recup_curve">Recuperación metalúrgica, por año (%)</label>
+      </div>
+      <span class="base-val" id="baseValRecup">Base: 88.0%</span>
+      <div class="ramp-row" id="recupRow"></div>
+      <div class="ramp-curve"><svg id="recupSvg" width="100%" height="46" viewBox="0 0 600 46" preserveAspectRatio="none"></svg></div>
+    </div>
+  </div>
+
+  <div class="input-grid" id="costosFinGrid">
+    <div class="panel">
+      <h2 data-i18n="costos_h2">Costos e inversión</h2>
+      <p class="hint" data-i18n="costos_hint">Sobrecosto o ahorro respecto del caso base de la PFS.</p>
+      <div class="field">
+        <div class="field-top"><label for="inCapex" data-i18n="lbl_capex">CAPEX inicial total</label><span class="readout" id="outCapex">0%</span></div>
+        <span class="base-val" id="baseValCapex">Base: $739.2 M</span>
+        <input type="range" id="inCapex" min="-25" max="40" step="1" value="0">
+      </div>
+      <div class="field" style="margin-top:12px;">
+        <div class="field-top"><label for="inOpex" data-i18n="lbl_opex">OPEX total anual</label><span class="readout" id="outOpex">0%</span></div>
+        <span class="base-val" id="baseValOpex" data-i18n="opex_base_desc">Mina + planta + mano de obra + G&amp;A, a 100% de capacidad</span>
+        <input type="range" id="inOpex" min="-25" max="40" step="1" value="0">
+      </div>
+      <div class="field" style="margin-top:22px;">
+        <div class="field-top"><label data-i18n="lbl_cierre">Provisión de cierre de mina</label></div>
+        <div class="readout" id="cierreReadout" style="font-size:14px;">–</div>
+        <span class="base-val" data-i18n="cierre_desc">Pago único en el Año 15 sobre el CAPEX del escenario, sin efecto fiscal</span>
+      </div>
+      <div class="field" style="margin-top:22px;">
+        <div class="field-top"><label data-i18n="lbl_ton_extracted">Toneladas extraídas en 15 años vs. Reservas</label></div>
+        <div class="readout" id="outTonExtracted" style="font-size:14px;">–</div>
+        <span class="base-val" id="baseValReservas">Reservas totales: 150.0 Mt</span>
+        <span class="base-val reservas-warn" id="reservasWarn" data-i18n="reservas_warn" hidden>Supera las reservas.</span>
+      </div>
+    </div>
+
+    <div class="panel">
+      <h2 data-i18n="financiero_h2">Financiero</h2>
+      <p class="hint" data-i18n="financiero_hint">Tasa de descuento usada para el VAN y la comparación con la TIR, y tasa de impuesto a las ganancias.</p>
+      <div class="field">
+        <div class="field-top"><label for="inWacc" data-i18n="lbl_wacc">WACC</label><span class="readout" id="outWacc">10.0%</span></div>
+        <span class="base-val" id="baseValWacc">Base: 10.0%</span>
+        <input type="range" id="inWacc" min="4" max="20" step="0.5" value="10">
+      </div>
+      <div class="field" style="margin-top:22px;">
+        <div class="field-top"><label for="inTasa" data-i18n="lbl_taxrate">Tasa de impuesto a las ganancias</label><span class="readout" id="outTasa">35.0%</span></div>
+        <span class="base-val" id="baseValTasa">Base: 35.0%</span>
+        <input type="range" id="inTasa" min="15" max="40" step="0.5" value="35">
+      </div>
+    </div>
+  </div>
+
+  <div class="panel" id="comparativaPanel" hidden>
+    <h2 data-i18n="comparativa_h2">Comparativa anual</h2>
+    <p class="hint" data-i18n="comparativa_hint">Compará los 4 escenarios en un año puntual (o en todo el proyecto), con los supuestos que tenga cada uno cargado ahora.</p>
+    <div class="field" style="max-width:280px;">
+      <div class="field-top"><label for="compYearSelect" data-i18n="comp_year_label">Año a comparar</label></div>
+      <select id="compYearSelect" class="lang-select" style="width:100%;"></select>
+    </div>
+    <div class="summary-scroll" style="margin-top:14px;">
+      <table class="summary-table" id="compTable">
+        <thead>
+          <tr>
+            <th class="rowlabel"></th>
+            <th data-col="base" data-i18n="scn_base">Base</th>
+            <th data-col="optimista" data-i18n="scn_optimista">Optimista</th>
+            <th data-col="pesimista" data-i18n="scn_pesimista">Pesimista</th>
+            <th data-col="personalizado" data-i18n="scn_personalizado">Personalizado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_precio">Precio del cobre</td>
+            <td id="comp_precio_base"></td><td id="comp_precio_optimista"></td><td id="comp_precio_pesimista"></td><td id="comp_precio_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_ley">Ley de cobre</td>
+            <td id="comp_ley_base"></td><td id="comp_ley_optimista"></td><td id="comp_ley_pesimista"></td><td id="comp_ley_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_recup">Recuperación metalúrgica</td>
+            <td id="comp_recup_base"></td><td id="comp_recup_optimista"></td><td id="comp_recup_pesimista"></td><td id="comp_recup_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="comp_col_capacidad">Capacidad de planta</td>
+            <td id="comp_capacidad_base"></td><td id="comp_capacidad_optimista"></td><td id="comp_capacidad_pesimista"></td><td id="comp_capacidad_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="comp_col_fcf">FCF del año</td>
+            <td id="comp_fcf_base"></td><td id="comp_fcf_optimista"></td><td id="comp_fcf_pesimista"></td><td id="comp_fcf_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel"><span data-i18n="comp_col_ton">Cobre fino recuperado, por año</span><span class="formula" data-i18n="formula_cu">(Tn procesadas × Ley × Recuperación)</span></td>
+            <td id="comp_ton_base"></td><td id="comp_ton_optimista"></td><td id="comp_ton_pesimista"></td><td id="comp_ton_personalizado"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="panel" id="resumenPanel">
+    <h2 data-i18n="resumen_h2">Resumen comparativo</h2>
+    <div class="hint-list">
+      <p class="hint" data-i18n="resumen_hint">Compara los 4 escenarios a la vez, con los supuestos que tenga cada uno cargado ahora.</p>
+      <p class="hint" data-i18n="resumen_hint2">La columna resaltada es la que estás viendo.</p>
+    </div>
+    <div class="summary-scroll">
+      <table class="summary-table">
+        <thead>
+          <tr>
+            <th class="rowlabel"></th>
+            <th data-col="base">Base</th>
+            <th data-col="optimista">Optimista</th>
+            <th data-col="pesimista">Pesimista</th>
+            <th data-col="personalizado">Personalizado</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="subhead"><td colspan="5" data-i18n="subhead_supuestos">Supuestos editados</td></tr>
+          <tr>
+            <td class="rowlabel"><span data-i18n="rowlabel_cu">Cobre fino recuperado, por año</span><span class="formula" data-i18n="formula_cu">(Tn procesadas × Ley × Recuperación)</span></td>
+            <td data-col="base" id="sum_cu_base"></td>
+            <td data-col="optimista" id="sum_cu_optimista"></td>
+            <td data-col="pesimista" id="sum_cu_pesimista"></td>
+            <td data-col="personalizado" id="sum_cu_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_precio">Precio del cobre</td>
+            <td data-col="base" id="sum_precio_base"></td>
+            <td data-col="optimista" id="sum_precio_optimista"></td>
+            <td data-col="pesimista" id="sum_precio_pesimista"></td>
+            <td data-col="personalizado" id="sum_precio_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_ley">Ley de cobre</td>
+            <td data-col="base" id="sum_ley_base"></td>
+            <td data-col="optimista" id="sum_ley_optimista"></td>
+            <td data-col="pesimista" id="sum_ley_pesimista"></td>
+            <td data-col="personalizado" id="sum_ley_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_recup">Recuperación metalúrgica</td>
+            <td data-col="base" id="sum_recup_base"></td>
+            <td data-col="optimista" id="sum_recup_optimista"></td>
+            <td data-col="pesimista" id="sum_recup_pesimista"></td>
+            <td data-col="personalizado" id="sum_recup_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_capex">CAPEX inicial</td>
+            <td data-col="base" id="sum_capex_base"></td>
+            <td data-col="optimista" id="sum_capex_optimista"></td>
+            <td data-col="pesimista" id="sum_capex_pesimista"></td>
+            <td data-col="personalizado" id="sum_capex_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_opex">OPEX anual (100% cap.)</td>
+            <td data-col="base" id="sum_opex_base"></td>
+            <td data-col="optimista" id="sum_opex_optimista"></td>
+            <td data-col="pesimista" id="sum_opex_pesimista"></td>
+            <td data-col="personalizado" id="sum_opex_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_wacc">WACC</td>
+            <td data-col="base" id="sum_wacc_base"></td>
+            <td data-col="optimista" id="sum_wacc_optimista"></td>
+            <td data-col="pesimista" id="sum_wacc_pesimista"></td>
+            <td data-col="personalizado" id="sum_wacc_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_ramp">Ramp-up de planta</td>
+            <td data-col="base" id="sum_ramp_base"></td>
+            <td data-col="optimista" id="sum_ramp_optimista"></td>
+            <td data-col="pesimista" id="sum_ramp_pesimista"></td>
+            <td data-col="personalizado" id="sum_ramp_personalizado"></td>
+          </tr>
+          <tr class="subhead"><td colspan="5" data-i18n="subhead_resultados">Resultados</td></tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_van">VAN</td>
+            <td data-col="base" id="sum_van_base"></td>
+            <td data-col="optimista" id="sum_van_optimista"></td>
+            <td data-col="pesimista" id="sum_van_pesimista"></td>
+            <td data-col="personalizado" id="sum_van_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_delta">ΔVAN vs. Base</td>
+            <td data-col="base" id="sum_delta_base"></td>
+            <td data-col="optimista" id="sum_delta_optimista"></td>
+            <td data-col="pesimista" id="sum_delta_pesimista"></td>
+            <td data-col="personalizado" id="sum_delta_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_tir">TIR</td>
+            <td data-col="base" id="sum_tir_base"></td>
+            <td data-col="optimista" id="sum_tir_optimista"></td>
+            <td data-col="pesimista" id="sum_tir_pesimista"></td>
+            <td data-col="personalizado" id="sum_tir_personalizado"></td>
+          </tr>
+          <tr>
+            <td class="rowlabel" data-i18n="rowlabel_payback">Payback simple</td>
+            <td data-col="base" id="sum_payback_base"></td>
+            <td data-col="optimista" id="sum_payback_optimista"></td>
+            <td data-col="pesimista" id="sum_payback_pesimista"></td>
+            <td data-col="personalizado" id="sum_payback_personalizado"></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <p class="chart-note mobile-scroll-hint" data-i18n="mobile_scroll_hint">Deslizá la tabla hacia la derecha para ver los otros escenarios →</p>
+    <p class="chart-note" data-i18n="delta_note">ΔVAN vs. Base compara el VAN de cada escenario contra el VAN de Base tal cual está cargado ahora mismo (no contra el preset original de Base).</p>
+  </div>
+
+  <footer class="note" data-i18n="footer_note">
+    Herramienta de orientación derivada del modelo financiero completo de Cordillera Cu (Excel, PFS). Simplificaciones activas: vida de mina fija en 15 años, Capital de Trabajo en 0, sin escudo por Sustaining CAPEX. El VAN se recalcula con tus supuestos actuales de tonelaje, precio, ley y recuperación año a año, CAPEX, OPEX, WACC y tasa de impuesto — no solo con el caso base. Podés vincular tu archivo de Excel con el botón "Cargar desde Excel" de arriba para traer los supuestos exactos del modelo; si volvés a modificar el archivo, hacé clic en ese mismo botón y elegilo de nuevo para refrescar (no se actualiza sola).
+  </footer>
+</div>
+
+<script>
+(function(){
+  "use strict";
+
+  var BASE = {
+    TONELADAS: 10000000, LEY: 0.0055, RECUP: 0.88, PAYABILITY: 0.965,
+    PRECIO: 4.2, FACTOR_CONV: 2204.62, LEY_CONC: 0.3, TC_UNIT: 80, RC_UNIT: 0.08,
+    RESERVAS: 150000000, TASA: 0.35, WACC: 0.10,
+    COSTO_MINA_UNIT: 3.2, COSTO_PLANTA_UNIT: 4.7,
+    MANO_OBRA_FIJA: -11000000, GA_FIJO: -45000000,
+    CAPEX: -739200000, N_YEARS: 15, TASA_CIERRE: 0.10
+  };
+
+  // ---------- idioma / número ----------
+  var LANG = 'es';
+  var LOCALE = 'es-AR';
+
+  var STRINGS = {
+    es: {
+      eyebrow: 'Proyecto Cordillera Cu · Calculadora de escenarios',
+      h1: '¿Cómo le va al proyecto bajo tus supuestos?',
+      subtitle: 'Simulá el pórfido de cobre Cordillera con tus propios parámetros — capacidad de planta, precio, ley y recuperación año a año, CAPEX, OPEX y tasa de impuesto — y mirá en vivo el VAN, la TIR y el Payback.',
+      byline: 'Por Agustín Yúdica · agustinyudica@gmail.com',
+      scn_base: 'Base', scn_optimista: 'Optimista', scn_pesimista: 'Pesimista', scn_personalizado: 'Personalizado',
+      tab_comparativa: 'Comparativa anual',
+      resetBtn: 'Restablecer escenario actual',
+      stat_van_label: 'VAN', stat_tir_label: 'TIR',
+      stat_payback_label: 'Payback simple', stat_payback_sub: 'años hasta recuperar el CAPEX',
+      chart_h2: 'Flujo de caja libre, año por año',
+      chart_hint: 'Año 0 es el desembolso de CAPEX',
+      chart_hint_pos: 'Verde = flujo positivo ese año',
+      chart_hint_neg: 'Rojo = flujo negativo de ese año',
+      chart_note: 'Vida de mina fija en 15 años con el ramp-up de abajo — igual simplificación que en el modelo de Excel.',
+      prod_h2: 'Producción',
+      prod_hint: 'Definí las toneladas procesadas (capacidad nominal de planta) y la curva de ramp-up que se aplica cada año.',
+      lbl_ton: 'Toneladas procesadas (% vs. base)',
+      lbl_ramp_header: 'Capacidad de planta por año (% del nominal)',
+      mercado_h2: 'Mercado', mercado_hint: 'Supuestos de precio y calidad del yacimiento, por año.',
+      lbl_precio: 'Precio del cobre', lbl_ley: 'Ley de cobre (head grade)', lbl_recup: 'Recuperación metalúrgica',
+      lbl_precio_curve: 'Precio del cobre, por año (USD/lb)',
+      lbl_ley_curve: 'Ley de cobre, por año (% Cu, head grade)',
+      lbl_recup_curve: 'Recuperación metalúrgica, por año (%)',
+      costos_h2: 'Costos e inversión', costos_hint: 'Sobrecosto o ahorro respecto del caso base de la PFS.',
+      lbl_capex: 'CAPEX inicial total', lbl_opex: 'OPEX total anual',
+      opex_base_desc: 'Mina + planta + mano de obra + G&A, a 100% de capacidad',
+      lbl_cierre: 'Provisión de cierre de mina',
+      cierre_desc: 'Pago único en el Año 15 sobre el CAPEX del escenario, sin efecto fiscal',
+      ofCapex: 'del CAPEX',
+      lbl_ton_extracted: 'Toneladas extraídas en 15 años vs. Reservas',
+      reservas_warn: 'Supera las reservas: en la realidad la mina se agotaría antes de los 15 años, así que el VAN está sobreestimado.',
+      reservas_warn_tip: 'Las toneladas extraídas superan las reservas: el VAN está sobreestimado.',
+      financiero_h2: 'Financiero',
+      financiero_hint: 'Tasa de descuento usada para el VAN y la comparación con la TIR, y tasa de impuesto a las ganancias.',
+      lbl_wacc: 'WACC', lbl_taxrate: 'Tasa de impuesto a las ganancias',
+      comparativa_h2: 'Comparativa anual',
+      comparativa_hint: 'Compará los 4 escenarios en un año puntual (o en todo el proyecto), con los supuestos que tenga cada uno cargado ahora.',
+      comp_year_label: 'Año a comparar',
+      comp_option_total: 'Todo el proyecto',
+      comp_col_capacidad: 'Capacidad de planta', comp_col_fcf: 'FCF del año', comp_col_ton: 'Cobre fino recuperado, por año', formula_cu: '(Tn procesadas × Ley × Recuperación)',
+      resumen_h2: 'Resumen comparativo',
+      resumen_hint: 'Compara los 4 escenarios a la vez, con los supuestos que tenga cada uno cargado ahora.',
+      resumen_hint2: 'La columna resaltada es la que estás viendo.',
+      subhead_supuestos: 'Supuestos editados', subhead_resultados: 'Resultados',
+      rowlabel_cu: 'Cobre fino recuperado, por año', rowlabel_precio: 'Precio del cobre', rowlabel_ley: 'Ley de cobre',
+      rowlabel_recup: 'Recuperación metalúrgica', rowlabel_capex: 'CAPEX inicial', rowlabel_opex: 'OPEX anual (100% cap.)',
+      rowlabel_wacc: 'WACC', rowlabel_ramp: 'Ramp-up de planta',
+      rowlabel_van: 'VAN', rowlabel_delta: 'ΔVAN vs. Base', rowlabel_tir: 'TIR',
+      rowlabel_payback: 'Payback simple',
+      mobile_scroll_hint: 'Deslizá la tabla hacia la derecha para ver los otros escenarios →',
+      delta_note: 'ΔVAN vs. Base compara el VAN de cada escenario contra el VAN de Base tal cual está cargado ahora mismo (no contra el preset original de Base).',
+      footer_note: 'Herramienta de orientación derivada del modelo financiero completo de Cordillera Cu (Excel, PFS). El flujo de caja incluye la provisión de cierre de mina (pago único en el Año 15, sobre el CAPEX del escenario, sin efecto fiscal). Simplificaciones activas: vida de mina fija en 15 años, Capital de Trabajo en 0, sin escudo por Sustaining CAPEX. El VAN se recalcula con tus supuestos actuales de tonelaje, precio, ley y recuperación año a año, CAPEX, OPEX, WACC y tasa de impuesto — no solo con el caso base. Podés vincular tu archivo de Excel con el botón "Cargar desde Excel" de arriba para traer los supuestos exactos del modelo; si volvés a modificar el archivo, hacé clic en ese mismo botón y elegilo de nuevo para refrescar (no se actualiza sola).',
+      na: 'N/A', years: 'años', yearWord: 'Año', yearPrefix: 'A',
+      rampCellAria: 'Capacidad de planta Año', chartAriaLabel: 'Flujo de caja libre por año',
+      activeWord: 'actual', noConverge: 'no converge en el rango',
+      atWacc: 'a WACC ', vsWacc: 'vs. WACC ',
+      perYearTon: ' Mt/año', perYearSuffix: '/año', fixedNotEditable: '(fija, no editable acá)',
+      reservasBasePrefix: 'Reservas totales: ', standardRamp: 'Estándar (60→85→100%)', flatRamp: '100% todo el período',
+      sync_h2: 'Vincular con tu Excel',
+      sync_hint: 'Cargá tu archivo Cordillera_Cu_Model.xlsx para traer los supuestos exactos del modelo (en vez de aproximarlos con el control deslizante). El archivo se lee acá mismo, en tu navegador — nunca se sube a ningún servidor. Si después modificás el Excel, hacé clic de nuevo en el botón y volvé a elegir el archivo para actualizar.',
+      sync_button: 'Cargar desde Excel',
+      sync_status_none: 'Todavía no se cargó ningún archivo — se están usando los supuestos por defecto de esta calculadora.',
+      sync_status_ok: 'Sincronizado con',
+      sync_status_error: 'No se pudo sincronizar: ',
+      sync_err_missing_name: 'no se encontró el rango con nombre',
+      sync_err_missing_label: 'no se encontró en la hoja Scenarios el texto',
+      sync_err_not_number: 'falta o no es un número el dato',
+      sync_err_ramp: 'faltan valores del ramp-up de planta en la hoja Scenarios',
+      sync_err_generic: 'el archivo no tiene el formato esperado (¿es el modelo Cordillera Cu en Excel?)',
+      chart_note2: 'Los montos debajo de cada barra, y el resto de los montos grandes de esta calculadora (CAPEX, OPEX, VAN, Toneladas), están expresados en millones de USD (o millones de toneladas).',
+      chart_legend_cumulative: 'Flujo acumulado', chart_legend_payback: 'Payback',
+      cumulativeWord: 'Acumulado', chartPaybackLabel: 'Payback: '
+    },
+    en: {
+      eyebrow: 'Cordillera Cu Project · Scenario Calculator',
+      h1: 'How is the project doing under your assumptions?',
+      subtitle: "Simulate the Cordillera copper porphyry with your own parameters — plant capacity, price, grade and recovery year by year, CAPEX, OPEX and the tax rate — and watch the NPV, IRR and Payback update live.",
+      byline: 'By Agustín Yúdica · agustinyudica@gmail.com',
+      scn_base: 'Base', scn_optimista: 'Optimistic', scn_pesimista: 'Pessimistic', scn_personalizado: 'Custom',
+      tab_comparativa: 'Annual comparison',
+      resetBtn: 'Reset current scenario',
+      stat_van_label: 'NPV', stat_tir_label: 'IRR',
+      stat_payback_label: 'Simple payback', stat_payback_sub: 'years to recover CAPEX',
+      chart_h2: 'Free cash flow, year by year',
+      chart_hint: 'Year 0 is the CAPEX outlay',
+      chart_hint_pos: 'Green = positive cash flow that year',
+      chart_hint_neg: 'Red = negative cash flow that year',
+      chart_note: 'Mine life fixed at 15 years with the ramp-up below — same simplification as in the Excel model.',
+      prod_h2: 'Production',
+      prod_hint: 'Set the tonnes processed (nominal plant capacity) and the ramp-up curve applied each year.',
+      lbl_ton: 'Tonnes processed (% vs. base)',
+      lbl_ramp_header: 'Plant capacity by year (% of nominal)',
+      mercado_h2: 'Market', mercado_hint: 'Price and deposit-quality assumptions, by year.',
+      lbl_precio: 'Copper price', lbl_ley: 'Copper grade (head grade)', lbl_recup: 'Metallurgical recovery',
+      lbl_precio_curve: 'Copper price, by year (USD/lb)',
+      lbl_ley_curve: 'Copper grade, by year (% Cu, head grade)',
+      lbl_recup_curve: 'Metallurgical recovery, by year (%)',
+      costos_h2: 'Costs & investment', costos_hint: 'Cost overrun or savings relative to the PFS base case.',
+      lbl_capex: 'Total initial CAPEX', lbl_opex: 'Total annual OPEX',
+      opex_base_desc: 'Mine + plant + labor + G&A, at 100% capacity',
+      lbl_cierre: 'Mine closure provision',
+      cierre_desc: "One-time payment in Year 15 based on the scenario's CAPEX, with no tax effect",
+      ofCapex: 'of CAPEX',
+      lbl_ton_extracted: 'Tonnes extracted in 15 years vs. Reserves',
+      reservas_warn: 'Exceeds reserves: in practice the mine would run out before year 15, so the NPV is overstated.',
+      reservas_warn_tip: 'Extracted tonnes exceed the reserves: the NPV is overstated.',
+      financiero_h2: 'Financial',
+      financiero_hint: 'Discount rate used for the NPV and the comparison with the IRR, and the income tax rate.',
+      lbl_wacc: 'WACC', lbl_taxrate: 'Income tax rate',
+      comparativa_h2: 'Annual comparison',
+      comparativa_hint: "Compare all 4 scenarios at a specific year (or across the entire project), with whatever assumptions each one currently has loaded.",
+      comp_year_label: 'Year to compare',
+      comp_option_total: 'Entire project',
+      comp_col_capacidad: 'Plant capacity', comp_col_fcf: "Year's FCF", comp_col_ton: 'Recovered copper metal, per year', formula_cu: '(Tonnes processed × Grade × Recovery)',
+      resumen_h2: 'Comparative summary',
+      resumen_hint: "Compares all 4 scenarios at once, with whatever assumptions each one currently has loaded.",
+      resumen_hint2: "The highlighted column is the one you're viewing.",
+      subhead_supuestos: 'Edited assumptions', subhead_resultados: 'Results',
+      rowlabel_cu: 'Recovered copper metal, per year', rowlabel_precio: 'Copper price', rowlabel_ley: 'Copper grade',
+      rowlabel_recup: 'Metallurgical recovery', rowlabel_capex: 'Initial CAPEX', rowlabel_opex: 'Annual OPEX (100% cap.)',
+      rowlabel_wacc: 'WACC', rowlabel_ramp: 'Plant ramp-up',
+      rowlabel_van: 'NPV', rowlabel_delta: 'ΔNPV vs. Base', rowlabel_tir: 'IRR',
+      rowlabel_payback: 'Simple payback',
+      mobile_scroll_hint: 'Swipe the table right to see the other scenarios →',
+      delta_note: "ΔNPV vs. Base compares each scenario's NPV against Base's NPV as currently loaded (not against Base's original preset).",
+      footer_note: "Directional tool derived from the full Cordillera Cu financial model (Excel, PFS). Cash flow includes the mine closure provision (one-time payment in Year 15, based on the scenario's CAPEX, with no tax effect). Active simplifications: mine life fixed at 15 years, working capital at 0, no Sustaining CAPEX shield. NPV is recalculated with your current tonnage, price, grade and recovery by year, CAPEX, OPEX, WACC and tax rate assumptions — not just the base case. You can link your Excel file with the \"Load from Excel\" button above to bring in the model's exact assumptions; if you change the file again, click that same button and pick it again to refresh (it does not update itself).",
+      na: 'N/A', years: 'years', yearWord: 'Year', yearPrefix: 'Y',
+      rampCellAria: 'Plant capacity Year', chartAriaLabel: 'Free cash flow by year',
+      activeWord: 'current', noConverge: 'does not converge in range',
+      atWacc: 'at WACC ', vsWacc: 'vs. WACC ',
+      perYearTon: ' Mt/yr', perYearSuffix: '/yr', fixedNotEditable: '(fixed, not editable here)',
+      reservasBasePrefix: 'Total reserves: ', standardRamp: 'Standard (60→85→100%)', flatRamp: '100% throughout',
+      sync_h2: 'Link to your Excel file',
+      sync_hint: "Load your Cordillera_Cu_Model.xlsx file to bring in the model's exact assumptions (instead of approximating them with the slider). The file is read right here in your browser — it is never uploaded to any server. If you later change the Excel file, click the button again and re-select the file to refresh.",
+      sync_button: 'Load from Excel',
+      sync_status_none: 'No file loaded yet — this calculator is using its own default assumptions.',
+      sync_status_ok: 'Synced with',
+      sync_status_error: "Couldn't sync: ",
+      sync_err_missing_name: 'named range not found',
+      sync_err_missing_label: 'could not find this text on the Scenarios sheet',
+      sync_err_not_number: 'missing or not a number:',
+      sync_err_ramp: 'missing plant ramp-up values on the Scenarios sheet',
+      sync_err_generic: 'the file is not in the expected format (is this the Cordillera Cu Excel model?)',
+      chart_note2: 'The amounts below each bar, and the other large figures throughout this calculator (CAPEX, OPEX, NPV, Tonnes), are expressed in millions of USD (or millions of tonnes).',
+      chart_legend_cumulative: 'Cumulative cash flow', chart_legend_payback: 'Payback',
+      cumulativeWord: 'Cumulative', chartPaybackLabel: 'Payback: '
+    }
+  };
+
+  function localeNum(v, minDigits, maxDigits){
+    if (maxDigits === undefined) maxDigits = minDigits;
+    return v.toLocaleString(LOCALE, { minimumFractionDigits: minDigits, maximumFractionDigits: maxDigits });
+  }
+
+  function buildFcf(ramp, p){
+    var fcf = [];
+    for (var i=0;i<BASE.N_YEARS;i++){
+      var r = ramp[i];
+      var precioI = p.precioCurve[i];
+      var leyI = p.leyCurve[i] / 100;
+      var recupI = p.recupCurve[i] / 100;
+      var tonI = p.toneladas * r;
+      var metalContenido = tonI * leyI;
+      var metalRecuperado = metalContenido * recupI;
+      var metalPagableT = metalRecuperado * BASE.PAYABILITY;
+      var metalPagableLb = metalPagableT * BASE.FACTOR_CONV;
+      var ingresoBruto = metalPagableLb * precioI;
+      var tonConc = metalRecuperado / BASE.LEY_CONC;
+      var tc = -tonConc * BASE.TC_UNIT;
+      var rc = -metalPagableLb * BASE.RC_UNIT;
+      var costoMina = -tonI * BASE.COSTO_MINA_UNIT;
+      var costoPlanta = -tonI * BASE.COSTO_PLANTA_UNIT;
+      var opexI = (costoMina + costoPlanta + BASE.MANO_OBRA_FIJA + BASE.GA_FIJO) * (1 + p.opexShock);
+      var nsr = ingresoBruto + tc + rc;
+      var ebitda = nsr + opexI;
+      var deprec = p.capex * (tonI / BASE.RESERVAS);
+      var ebit = ebitda + deprec;
+      var tax = -BASE.TASA * Math.max(ebit, 0);
+      // Provisión de cierre de mina: pago único en el último año (10% del CAPEX propio del
+      // escenario, sin efecto fiscal — igual tratamiento que en Cash Flow!Q32/Scenarios del Excel).
+      var cierre = (i === BASE.N_YEARS - 1) ? p.capex * BASE.TASA_CIERRE : 0;
+      fcf.push(ebitda + tax + cierre);
+    }
+    return fcf;
+  }
+
+  function npvExcel(rate, values){
+    var s = 0;
+    for (var i=0;i<values.length;i++) s += values[i] / Math.pow(1+rate, i+1);
+    return s;
+  }
+
+  function vanTir(fcf, capex, wacc){
+    var van = capex + npvExcel(wacc, fcf);
+    var cashflows = [capex].concat(fcf);
+    function f(rr){
+      var s = 0;
+      for (var i=0;i<cashflows.length;i++) s += cashflows[i] / Math.pow(1+rr, i);
+      return s;
+    }
+    var lo = -0.9999, hi = 100;
+    var flo = f(lo), fhi = f(hi);
+    if (isNaN(flo) || isNaN(fhi) || flo*fhi > 0) return { van: van, tir: null };
+    for (var it=0; it<200; it++){
+      var mid = (lo+hi)/2, fmid = f(mid);
+      if (Math.abs(fmid) < 1e-6){ lo = hi = mid; break; }
+      if (flo*fmid < 0){ hi = mid; fhi = fmid; } else { lo = mid; flo = fmid; }
+    }
+    return { van: van, tir: (lo+hi)/2 };
+  }
+
+  function paybackSimple(fcf, capex){
+    var C = [capex].concat(fcf);
+    var cum = [], running = 0;
+    for (var i=0;i<C.length;i++){ running += C[i]; cum.push(running); }
+    var k = 0;
+    while (k < cum.length && cum[k] < 0) k++;
+    if (k === 0) return 0;
+    if (k >= cum.length) return null;
+    return (k-1) + (-cum[k-1]) / C[k];
+  }
+
+  function computeAll(state){
+    var toneladas = BASE.TONELADAS * (1 + state.toneladasShock);
+    var capex = BASE.CAPEX * (1 + state.capexShock);
+    var wacc = state.wacc;
+    var p = {
+      toneladas: toneladas, capex: capex, opexShock: state.opexShock, wacc: wacc,
+      precioCurve: state.precioCurve, leyCurve: state.leyCurve, recupCurve: state.recupCurve
+    };
+    var fcf = buildFcf(state.ramp, p);
+    var vt = vanTir(fcf, capex, wacc);
+    var payback = paybackSimple(fcf, capex);
+    var tonExtracted = 0;
+    for (var i=0;i<state.ramp.length;i++) tonExtracted += toneladas * state.ramp[i];
+    return { van: vt.van, tir: vt.tir, payback: payback, fcf: fcf, capex: capex, tonExtracted: tonExtracted, wacc: wacc };
+  }
+
+  // ---------- presets ----------
+  var DEFAULT_RAMP = [0.6,0.85,1,1,1,1,1,1,1,1,1,1,1,1,1];
+  // Curva "plana": mismo valor los 15 años — es como se representa, en términos de curva, el
+  // viejo shock único (%) que tenía cada preset antes de que Precio/Ley/Recuperación pasaran
+  // a ser editables año a año. Con esto el preset de cada escenario reproduce exactamente el
+  // mismo VAN/TIR/Payback que antes del refactor.
+  function flatCurve(v){
+    var a = [];
+    for (var i=0;i<15;i++) a.push(v);
+    return a;
+  }
+  var PRESETS = {
+    base:          { toneladasShock:0,    capexShock:0,    opexShock:0,    wacc:0.10, ramp: DEFAULT_RAMP.slice(),
+                      precioCurve: flatCurve(BASE.PRECIO), leyCurve: flatCurve(BASE.LEY*100), recupCurve: flatCurve(BASE.RECUP*100) },
+    optimista:     { toneladasShock:0.10, capexShock:-0.05, opexShock:-0.05, wacc:0.10, ramp: DEFAULT_RAMP.slice(),
+                      precioCurve: flatCurve(BASE.PRECIO*1.15), leyCurve: flatCurve(BASE.LEY*100*1.05), recupCurve: flatCurve(BASE.RECUP*100*1.03) },
+    pesimista:     { toneladasShock:-0.10,capexShock:0.10,  opexShock:0.10,  wacc:0.10, ramp: DEFAULT_RAMP.slice(),
+                      precioCurve: flatCurve(BASE.PRECIO*0.85), leyCurve: flatCurve(BASE.LEY*100*0.95), recupCurve: flatCurve(BASE.RECUP*100*0.97) },
+    personalizado: { toneladasShock:0,    capexShock:0,    opexShock:0,    wacc:0.10, ramp: DEFAULT_RAMP.slice(),
+                      precioCurve: flatCurve(BASE.PRECIO), leyCurve: flatCurve(BASE.LEY*100), recupCurve: flatCurve(BASE.RECUP*100) }
+  };
+
+  function cloneState(s){
+    return {
+      toneladasShock: s.toneladasShock, capexShock: s.capexShock, opexShock: s.opexShock, wacc: s.wacc,
+      ramp: s.ramp.slice(), precioCurve: s.precioCurve.slice(), leyCurve: s.leyCurve.slice(), recupCurve: s.recupCurve.slice()
+    };
+  }
+
+  // Cada escenario guarda su propio estado, independiente de los demás — cambiar de pestaña
+  // NO resetea lo que hayas editado ahí; el botón "Restablecer" es lo único que lo devuelve al preset.
+  var SCN_KEYS = ['base','optimista','pesimista','personalizado'];
+  var scenarioStates = {
+    base: cloneState(PRESETS.base),
+    optimista: cloneState(PRESETS.optimista),
+    pesimista: cloneState(PRESETS.pesimista),
+    personalizado: cloneState(PRESETS.personalizado)
+  };
+  var currentScenario = "base";
+  var state = scenarioStates.base;
+
+  // ---------- DOM refs ----------
+  var els = {
+    inTon: document.getElementById('inTon'), outTon: document.getElementById('outTon'),
+    inCapex: document.getElementById('inCapex'), outCapex: document.getElementById('outCapex'),
+    inOpex: document.getElementById('inOpex'), outOpex: document.getElementById('outOpex'),
+    inWacc: document.getElementById('inWacc'), outWacc: document.getElementById('outWacc'),
+    inTasa: document.getElementById('inTasa'), outTasa: document.getElementById('outTasa'),
+    rampRow: document.getElementById('rampRow'), rampSvg: document.getElementById('rampSvg'),
+    valVan: document.getElementById('valVan'), subVan: document.getElementById('subVan'), statVan: document.getElementById('statVan'),
+    valTir: document.getElementById('valTir'), subTir: document.getElementById('subTir'), statTir: document.getElementById('statTir'),
+    valPayback: document.getElementById('valPayback'), statPayback: document.getElementById('statPayback'),
+    outTonExtracted: document.getElementById('outTonExtracted'),
+    chartWrap: document.getElementById('chartWrap'), resetBtn: document.getElementById('resetBtn'),
+    syncBtn: document.getElementById('syncBtn'), syncFileInput: document.getElementById('syncFileInput'),
+    syncStatus: document.getElementById('syncStatus'),
+    statGrid: document.getElementById('statGrid'), chartPanel: document.getElementById('chartPanel'),
+    prodPanel: document.getElementById('prodPanel'), mercadoPanel: document.getElementById('mercadoPanel'),
+    costosFinGrid: document.getElementById('costosFinGrid'), comparativaPanel: document.getElementById('comparativaPanel'),
+    compYearSelect: document.getElementById('compYearSelect')
+  };
+
+  function fmtUsd(v){
+    if (v == null || isNaN(v)) return STRINGS[LANG].na;
+    var neg = v < 0;
+    var abs = Math.abs(v) / 1e6;
+    var s = "$ " + localeNum(abs, 1, 1) + " M";
+    return neg ? "-" + s : s;
+  }
+  function fmtPct(v, digits){
+    if (v == null || isNaN(v)) return STRINGS[LANG].na;
+    return localeNum(v*100, digits===undefined?2:digits) + "%";
+  }
+  function fmtShock(v){
+    var pct = Math.round(v*100);
+    return (pct>0?"+":"") + localeNum(pct,0,0) + "%";
+  }
+
+  // ---------- curvas editables (ramp-up, precio, ley, recuperación) ----------
+  // Las 4 curvas de 15 celdas (una por año) comparten el mismo patrón de UI: una fila de inputs
+  // numéricos + una mini curva SVG debajo. CURVE_SPECS describe las particularidades de cada una
+  // (rango del input, decimales a mostrar, cómo convertir entre lo que ve el usuario en la celda
+  // y lo que se guarda en el estado, y si la curva se dibuja con el 0 como piso (ramp-up) o con
+  // una ventana min–máx ajustada a los valores (precio/ley/recuperación nunca pasan cerca de 0,
+  // así que anclar a 0 aplastaría la curva contra el techo del gráfico).
+  function round(v, decimals){
+    var f = Math.pow(10, decimals);
+    return Math.round(v*f) / f;
+  }
+  var CURVE_SPECS = {
+    ramp:   { stateKey:'ramp',        rowId:'rampRow',   svgId:'rampSvg',   min:0, max:150, step:5,     decimals:0, baseline:'zero',
+              toCell:function(v){ return v*100; }, fromCell:function(x){ return x/100; } },
+    precio: { stateKey:'precioCurve', rowId:'precioRow', svgId:'precioSvg', min:0, max:20,  step:0.01,  decimals:2, baseline:'auto',
+              toCell:function(v){ return v; }, fromCell:function(x){ return x; } },
+    ley:    { stateKey:'leyCurve',    rowId:'leyRow',    svgId:'leySvg',    min:0, max:5,   step:0.001, decimals:3, baseline:'auto',
+              toCell:function(v){ return v; }, fromCell:function(x){ return x; } },
+    recup:  { stateKey:'recupCurve',  rowId:'recupRow',  svgId:'recupSvg',  min:0, max:100, step:0.1,   decimals:1, baseline:'auto',
+              toCell:function(v){ return v; }, fromCell:function(x){ return x; } }
+  };
+  var CURVE_KEYS = ['ramp','precio','ley','recup'];
+
+  function buildCurveInputs(curveName){
+    var spec = CURVE_SPECS[curveName];
+    var row = document.getElementById(spec.rowId);
+    row.innerHTML = "";
+    for (var i=0;i<15;i++){
+      var cell = document.createElement('div');
+      cell.className = 'ramp-cell';
+      var label = document.createElement('label');
+      label.textContent = STRINGS[LANG].yearPrefix + (i+1);
+      var input = document.createElement('input');
+      input.type = 'number'; input.min = String(spec.min); input.max = String(spec.max); input.step = String(spec.step);
+      input.id = spec.rowId + i;
+      input.setAttribute('aria-label', STRINGS[LANG].rampCellAria + ' ' + (i+1));
+      cell.appendChild(label); cell.appendChild(input);
+      row.appendChild(cell);
+      (function(idx, inp){
+        inp.addEventListener('input', function(){
+          var v = parseFloat(inp.value);
+          if (isNaN(v)) v = 0;
+          state[spec.stateKey][idx] = spec.fromCell(v);
+          drawCurveSvg(curveName);
+          recompute();
+        });
+      })(i, input);
+    }
+  }
+  function syncCurveInputs(curveName){
+    var spec = CURVE_SPECS[curveName];
+    for (var i=0;i<15;i++){
+      document.getElementById(spec.rowId+i).value = round(spec.toCell(state[spec.stateKey][i]), spec.decimals);
+    }
+    drawCurveSvg(curveName);
+  }
+  function drawCurveSvg(curveName){
+    var spec = CURVE_SPECS[curveName];
+    var svgEl = document.getElementById(spec.svgId);
+    var arr = state[spec.stateKey];
+    var w = 600, h = 46, pad = 4;
+    var lo, hi;
+    if (spec.baseline === 'zero'){
+      lo = 0;
+      hi = Math.max(1.1, Math.max.apply(null, arr));
+    } else {
+      var minV = Math.min.apply(null, arr), maxV = Math.max.apply(null, arr);
+      var span = maxV - minV;
+      var cushion = span > 1e-9 ? span * 0.15 : Math.max(Math.abs(maxV), 1e-6) * 0.1;
+      lo = minV - cushion; hi = maxV + cushion;
+      if (hi - lo < 1e-9) hi = lo + 1;
+    }
+    var pts = [];
+    for (var i=0;i<15;i++){
+      var x = pad + (i/14) * (w - 2*pad);
+      var y = h - pad - ((arr[i]-lo)/(hi-lo)) * (h - 2*pad);
+      pts.push(x.toFixed(1)+","+y.toFixed(1));
+    }
+    var accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    var grid = getComputedStyle(document.documentElement).getPropertyValue('--grid').trim();
+    svgEl.innerHTML =
+      '<line x1="'+pad+'" y1="'+(h-pad)+'" x2="'+(w-pad)+'" y2="'+(h-pad)+'" stroke="'+grid+'" stroke-width="1"/>' +
+      '<polyline points="'+pts.join(' ')+'" fill="none" stroke="'+accent+'" stroke-width="2"/>';
+  }
+  function buildAllCurveInputs(){
+    CURVE_KEYS.forEach(buildCurveInputs);
+  }
+  function syncAllCurveInputs(){
+    CURVE_KEYS.forEach(syncCurveInputs);
+  }
+
+  // ---------- chart ----------
+  // Dos paneles apilados, cada uno con su propia escala honesta (nunca un eje compartido
+  // forzado: el acumulado llega a ser ~3x el mayor valor anual, y compartir escala volvía
+  // las barras anuales invisibles). Comparten las mismas posiciones X (xCenter), así que
+  // una columna del panel de arriba se alinea exactamente con la misma columna de abajo —
+  // el cruce por cero del acumulado (panel inferior) cae justo donde dice el marcador de Payback.
+  function drawChart(fcf, capex, payback){
+    var W = 1040;
+    // padL tiene que dejar lugar para la etiqueta más larga del eje Y (ej. "+2.011,5M"): con
+    // fuente monoespaciada de 10px eso son ~54px; si el acumulado supera los 4 dígitos de
+    // millones (pasa el CAPEX de $1.000M o el flujo acumulado a lo largo de la vida de mina),
+    // la etiqueta se corre a la izquierda del borde del SVG y queda recortada por el viewBox
+    // (por eso a veces se veía ".011,5M" en vez de "+2.011,5M" — el signo y el primer dígito
+    // quedaban fuera del área visible). 64px da margen de sobra incluso con signo + 4 dígitos.
+    var padL = 64, padR = 10;
+    var values = [capex].concat(fcf);
+    var n = values.length;
+    var cum = [];
+    var running = 0;
+    for (var i=0;i<n;i++){ running += values[i]; cum.push(running); }
+
+    // panel 1: barras (FCF por año) — escala propia
+    var p1_padT = 10, p1_innerH = 130, p1_labelsH = 28;
+    // eje X compartido (números de año) entre los dos paneles
+    var axisH = 34;
+    // panel 2: flujo acumulado — escala propia
+    var p2_padT = 8, p2_innerH = 84, p2_bottomPad = 10;
+    var H = p1_padT + p1_innerH + p1_labelsH + axisH + p2_padT + p2_innerH + p2_bottomPad;
+
+    var innerW = W - padL - padR;
+    var bw = (innerW / n) * 0.68;
+
+    var maxAbs1 = Math.max.apply(null, values.map(Math.abs)) || 1;
+    var maxAbs2 = Math.max.apply(null, cum.map(Math.abs)) || 1;
+
+    var zeroY1 = p1_padT + p1_innerH/2;
+    var p2_top = p1_padT + p1_innerH + p1_labelsH + axisH;
+    var zeroY2 = p2_top + p2_padT + p2_innerH/2;
+
+    var good = getComputedStyle(document.documentElement).getPropertyValue('--good').trim();
+    var critical = getComputedStyle(document.documentElement).getPropertyValue('--critical').trim();
+    var muted = getComputedStyle(document.documentElement).getPropertyValue('--muted').trim();
+    var grid = getComputedStyle(document.documentElement).getPropertyValue('--grid').trim();
+    var text = getComputedStyle(document.documentElement).getPropertyValue('--text-2').trim();
+    var accent = getComputedStyle(document.documentElement).getPropertyValue('--accent').trim();
+    var accentStrong = getComputedStyle(document.documentElement).getPropertyValue('--accent-strong').trim();
+    var surface = getComputedStyle(document.documentElement).getPropertyValue('--surface').trim();
+
+    function xCenter(t){ return padL + (t+0.5) * (innerW/n); }
+    function y1For(v){ return zeroY1 - (v/maxAbs1) * (p1_innerH/2 - 4); }
+    function y2For(v){ return zeroY2 - (v/maxAbs2) * (p2_innerH/2 - 4); }
+
+    var svg = '<svg viewBox="0 0 '+W+' '+(H+16)+'" preserveAspectRatio="xMidYMid meet" role="img" aria-label="'+STRINGS[LANG].chartAriaLabel+'" style="width:100%;height:auto;display:block;">';
+
+    // ---- panel 1: barras ----
+    svg += '<line x1="'+padL+'" y1="'+zeroY1+'" x2="'+(W-padR)+'" y2="'+zeroY1+'" stroke="'+grid+'" stroke-width="1"/>';
+    for (var i=0;i<n;i++){
+      var v = values[i];
+      var x = padL + (i/n)*innerW + ((innerW/n - bw)/2);
+      var barH = Math.abs(v)/maxAbs1 * (p1_innerH/2 - 4);
+      var y = v >= 0 ? zeroY1 - barH : zeroY1;
+      var color = v >= 0 ? good : critical;
+      var label = STRINGS[LANG].yearWord + ' ' + i;
+      svg += '<rect class="bar" data-idx="'+i+'" data-label="'+label+'" data-value="'+v+'" x="'+x.toFixed(1)+'" y="'+y.toFixed(1)+'" width="'+bw.toFixed(1)+'" height="'+Math.max(barH,1).toFixed(1)+'" rx="2" fill="'+color+'"></rect>';
+      var cx = xCenter(i);
+      var millionsVal = v/1e6;
+      var amtText = (millionsVal<0?'-':'') + localeNum(Math.abs(millionsVal),1,1) + 'M';
+      var amtColor = v < 0 ? critical : muted;
+      svg += '<text x="'+cx.toFixed(1)+'" y="'+(p1_padT+p1_innerH+16)+'" font-size="8.5" font-weight="700" fill="'+amtColor+'" text-anchor="middle">'+amtText+'</text>';
+    }
+    svg += '<text x="'+(padL-6)+'" y="'+(zeroY1-p1_innerH/2+8)+'" font-size="10" fill="'+text+'" text-anchor="end">+'+fmtCompact(maxAbs1)+'</text>';
+    svg += '<text x="'+(padL-6)+'" y="'+(zeroY1+4)+'" font-size="10" fill="'+text+'" text-anchor="end">0</text>';
+    svg += '<text x="'+(padL-6)+'" y="'+(zeroY1+p1_innerH/2)+'" font-size="10" fill="'+text+'" text-anchor="end">-'+fmtCompact(maxAbs1)+'</text>';
+
+    // ---- eje X compartido (número de año) ----
+    var axisY = p1_padT + p1_innerH + p1_labelsH + 13;
+    for (var iy=0; iy<n; iy++){
+      svg += '<text x="'+xCenter(iy).toFixed(1)+'" y="'+axisY+'" font-size="10" fill="'+muted+'" text-anchor="middle">'+(iy===0?'0':iy)+'</text>';
+    }
+
+    // ---- panel 2: flujo acumulado ----
+    svg += '<text x="'+padL+'" y="'+(p2_top+p2_padT-2)+'" font-size="10" fill="'+accent+'" text-anchor="start">'+STRINGS[LANG].cumulativeWord+'</text>';
+    svg += '<line x1="'+padL+'" y1="'+zeroY2+'" x2="'+(W-padR)+'" y2="'+zeroY2+'" stroke="'+grid+'" stroke-width="1"/>';
+    var cumPts = [];
+    for (var i2=0;i2<n;i2++){ cumPts.push(xCenter(i2).toFixed(1) + ',' + y2For(cum[i2]).toFixed(1)); }
+    svg += '<polyline points="'+cumPts.join(' ')+'" fill="none" stroke="'+accent+'" stroke-width="2"/>';
+    for (var i3=0;i3<n;i3++){
+      var cx3 = xCenter(i3), cy3 = y2For(cum[i3]);
+      var lbl3 = STRINGS[LANG].yearWord + ' ' + i3;
+      svg += '<circle class="cumpt" data-label="'+lbl3+'" data-value="'+cum[i3]+'" cx="'+cx3.toFixed(1)+'" cy="'+cy3.toFixed(1)+'" r="8" fill="'+accent+'" fill-opacity="0" stroke="none"></circle>';
+      svg += '<circle cx="'+cx3.toFixed(1)+'" cy="'+cy3.toFixed(1)+'" r="2.5" fill="'+accent+'" pointer-events="none"></circle>';
+    }
+    svg += '<text x="'+(padL-6)+'" y="'+(zeroY2-p2_innerH/2+8)+'" font-size="10" fill="'+text+'" text-anchor="end">+'+fmtCompact(maxAbs2)+'</text>';
+    svg += '<text x="'+(padL-6)+'" y="'+(zeroY2+4)+'" font-size="10" fill="'+text+'" text-anchor="end">0</text>';
+    svg += '<text x="'+(padL-6)+'" y="'+(zeroY2+p2_innerH/2)+'" font-size="10" fill="'+text+'" text-anchor="end">-'+fmtCompact(maxAbs2)+'</text>';
+
+    // marcador de Payback: coincide exactamente con el cruce por cero del acumulado
+    if (payback != null && isFinite(payback)){
+      var pxp = Math.min(Math.max(xCenter(payback), padL), W-padR);
+      svg += '<circle cx="'+pxp.toFixed(1)+'" cy="'+zeroY2.toFixed(1)+'" r="5" fill="'+accentStrong+'" stroke="'+surface+'" stroke-width="2"></circle>';
+      var paybackLabel = STRINGS[LANG].chartPaybackLabel + localeNum(payback,2,2) + ' ' + STRINGS[LANG].years;
+      var labelX = Math.min(Math.max(pxp, padL+65), W-padR-65);
+      // el cruce siempre cae sobre zeroY2 (la línea de cero del panel), con margen de sobra arriba
+      svg += '<text x="'+labelX.toFixed(1)+'" y="'+(zeroY2-14).toFixed(1)+'" font-size="10.5" fill="'+accentStrong+'" text-anchor="middle" font-weight="600">'+paybackLabel+'</text>';
+    }
+
+    svg += '</svg>';
+
+    els.chartWrap.innerHTML = svg + '<div class="tooltip" id="tt"></div>';
+    var tt = document.getElementById('tt');
+    var bars = els.chartWrap.querySelectorAll('.bar');
+    bars.forEach(function(bar){
+      bar.addEventListener('mousemove', function(e){
+        var rect = els.chartWrap.getBoundingClientRect();
+        var lbl = bar.getAttribute('data-label');
+        var val = parseFloat(bar.getAttribute('data-value'));
+        tt.textContent = lbl + ': ' + fmtUsd(val);
+        tt.style.left = (e.clientX - rect.left) + 'px';
+        tt.style.top = (e.clientY - rect.top) + 'px';
+        tt.style.opacity = 1;
+      });
+      bar.addEventListener('mouseleave', function(){ tt.style.opacity = 0; });
+    });
+    var cumpts = els.chartWrap.querySelectorAll('.cumpt');
+    cumpts.forEach(function(pt){
+      pt.addEventListener('mousemove', function(e){
+        var rect = els.chartWrap.getBoundingClientRect();
+        var lbl = pt.getAttribute('data-label');
+        var val = parseFloat(pt.getAttribute('data-value'));
+        tt.textContent = lbl + ' · ' + STRINGS[LANG].cumulativeWord + ': ' + fmtUsd(val);
+        tt.style.left = (e.clientX - rect.left) + 'px';
+        tt.style.top = (e.clientY - rect.top) + 'px';
+        tt.style.opacity = 1;
+      });
+      pt.addEventListener('mouseleave', function(){ tt.style.opacity = 0; });
+    });
+  }
+  function fmtCompact(v){
+    return localeNum(v/1e6,1,1) + 'M';
+  }
+
+  // ---------- render ----------
+  function syncScalarInputs(){
+    els.inTon.value = Math.round(state.toneladasShock*100);
+    els.inCapex.value = Math.round(state.capexShock*100);
+    els.inOpex.value = Math.round(state.opexShock*100);
+    els.inWacc.value = state.wacc*100;
+    updateReadouts();
+  }
+  function withShock(valueText, shock){
+    return valueText + ' <span class="shock">(' + fmtShock(shock) + ')</span>';
+  }
+
+  // Deriva los valores absolutos (precio, ley, capex, etc.) de cualquier estado de escenario —
+  // se usa tanto para los sliders del escenario activo como para la fila de cada escenario
+  // en el Resumen comparativo, así ambos lugares muestran exactamente lo mismo.
+  function fieldStrings(s){
+    var toneladas = BASE.TONELADAS * (1 + s.toneladasShock);
+    var capexAbs = Math.abs(BASE.CAPEX * (1 + s.capexShock));
+    var fixedOpex = -(BASE.MANO_OBRA_FIJA + BASE.GA_FIJO); // positive: 56,000,000
+    var varOpexFull = toneladas * (BASE.COSTO_MINA_UNIT + BASE.COSTO_PLANTA_UNIT);
+    var opexFullAbs = (varOpexFull + fixedOpex) * (1 + s.opexShock);
+    return {
+      ton: localeNum(toneladas/1e6,1,1) + STRINGS[LANG].perYearTon, tonShock: s.toneladasShock,
+      precio: summarizeCurve(s.precioCurve, 'precio'),
+      ley: summarizeCurve(s.leyCurve, 'ley'),
+      recup: summarizeCurve(s.recupCurve, 'recup'),
+      capex: '$' + localeNum(capexAbs/1e6,1,1) + ' M', capexShock: s.capexShock,
+      opex: '$' + localeNum(opexFullAbs/1e6,1,1) + ' M' + STRINGS[LANG].perYearSuffix, opexShock: s.opexShock,
+      wacc: fmtPct(s.wacc, 1),
+      ramp: summarizeRamp(s.ramp)
+    };
+  }
+
+  function summarizeRamp(ramp){
+    var isDefault = ramp.length === DEFAULT_RAMP.length && ramp.every(function(v,i){ return Math.abs(v-DEFAULT_RAMP[i]) < 1e-9; });
+    if (isDefault) return STRINGS[LANG].standardRamp;
+    var diffs = [];
+    for (var i=0;i<ramp.length;i++){
+      if (Math.abs(ramp[i]-1) > 1e-9) diffs.push(STRINGS[LANG].yearPrefix+(i+1)+':'+Math.round(ramp[i]*100)+'%');
+    }
+    if (diffs.length === 0) return STRINGS[LANG].flatRamp;
+    if (diffs.length > 4) return diffs.slice(0,4).join(' · ') + ' · …';
+    return diffs.join(' · ');
+  }
+
+  // Resumen compacto de una curva de 15 años para la tabla de Resumen comparativo: si está
+  // plana (los 15 años iguales, sea el valor base o uno editado) muestra un único valor; si
+  // varía, muestra el rango mínimo–máximo — el mismo criterio de "Todo el proyecto" acordado
+  // para la comparación año a año en el Excel.
+  function fmtCurveVal(v, kind){
+    if (kind === 'precio') return '$' + localeNum(v,2,2) + '/lb';
+    if (kind === 'ley') return localeNum(v,3,3) + '% Cu';
+    if (kind === 'recup') return localeNum(v,1,1) + '%';
+    return String(v);
+  }
+  // Cobre fino recuperado por año (toneladas de metal Cu puro, después de ley y recuperación
+  // metalúrgica — el dato que se ve en las noticias como "producción anual de cobre").
+  // Es el mismo "metalRecuperado" que usa buildFcf, antes de aplicar la payability del smelter.
+  function copperArr(s){
+    var toneladas = BASE.TONELADAS * (1 + s.toneladasShock);
+    var out = [];
+    for (var i=0;i<BASE.N_YEARS;i++){
+      out.push(toneladas * s.ramp[i] * (s.leyCurve[i]/100) * (s.recupCurve[i]/100));
+    }
+    return out;
+  }
+  function fmtTonCu(v){ return localeNum(v,0,0) + ' t'; }
+
+  function summarizeCurve(curve, kind){
+    var v0 = curve[0];
+    var isFlat = curve.every(function(v){ return Math.abs(v-v0) < 1e-9; });
+    if (isFlat) return fmtCurveVal(v0, kind);
+    var mn = Math.min.apply(null, curve), mx = Math.max.apply(null, curve);
+    return fmtCurveVal(mn, kind) + ' – ' + fmtCurveVal(mx, kind);
+  }
+
+  function updateReadouts(){
+    var f = fieldStrings(state);
+    els.outTon.innerHTML = withShock(f.ton, f.tonShock);
+    els.outCapex.innerHTML = withShock(f.capex, f.capexShock);
+    els.outOpex.innerHTML = withShock(f.opex, f.opexShock);
+    els.outWacc.textContent = f.wacc;
+  }
+
+  function recompute(){
+    var r = computeAll(state);
+
+    els.valVan.textContent = fmtUsd(r.van);
+    els.statVan.classList.toggle('good', r.van >= 0);
+    els.statVan.classList.toggle('critical', r.van < 0);
+    els.subVan.textContent = STRINGS[LANG].atWacc + fmtPct(r.wacc, 1);
+
+    els.valTir.textContent = r.tir==null ? STRINGS[LANG].na : fmtPct(r.tir, 1);
+    var tirGood = r.tir != null && r.tir >= r.wacc;
+    els.statTir.classList.toggle('good', tirGood);
+    els.statTir.classList.toggle('critical', r.tir != null && !tirGood);
+    els.subTir.textContent = r.tir==null ? STRINGS[LANG].noConverge : (STRINGS[LANG].vsWacc + fmtPct(r.wacc,1));
+
+    els.valPayback.textContent = r.payback==null ? STRINGS[LANG].na : localeNum(r.payback,2,2) + ' ' + STRINGS[LANG].years;
+    els.statPayback.classList.toggle('critical', r.payback==null);
+
+    var reservaDiff = r.tonExtracted - BASE.RESERVAS;
+    els.outTonExtracted.textContent = localeNum(r.tonExtracted/1e6,1,1) + ' Mt (' + (reservaDiff>=0?'+':'') + localeNum(reservaDiff/1e6,1,1) + ' Mt)';
+    var overReserves = reservaDiff > 0.5;
+    els.outTonExtracted.classList.toggle('over', overReserves);
+    document.getElementById('reservasWarn').hidden = !overReserves;
+    var vw = document.getElementById('vanWarn');
+    vw.hidden = !overReserves;
+    vw.title = STRINGS[LANG].reservas_warn_tip;
+    vw.setAttribute('aria-label', STRINGS[LANG].reservas_warn_tip);
+
+    drawChart(r.fcf, r.capex, r.payback);
+    updateSummaryTable();
+  }
+
+  // 'scenario': se está editando/mirando uno de los 4 escenarios (Base/Optimista/Pesimista/
+  // Personalizado). 'comparativa': se está mirando la pestaña "Comparativa anual", que no edita
+  // nada — solo lee el estado actual de los 4 escenarios para un año puntual (o todo el proyecto).
+  var viewMode = 'scenario';
+
+  function toggleViewMode(){
+    var scenarioMode = viewMode === 'scenario';
+    els.statGrid.hidden = !scenarioMode;
+    els.chartPanel.hidden = !scenarioMode;
+    els.prodPanel.hidden = !scenarioMode;
+    els.mercadoPanel.hidden = !scenarioMode;
+    els.costosFinGrid.hidden = !scenarioMode;
+    els.comparativaPanel.hidden = scenarioMode;
+    document.getElementById('resumenPanel').hidden = !scenarioMode;
+    els.resetBtn.style.display = scenarioMode ? '' : 'none';
+  }
+
+  // Recuerda dónde quedó el scroll en cada vista (escenarios / comparativa anual) para
+  // poder ir y volver sin tener que subir de nuevo.
+  var scrollMem = { scenario: 0, comparativa: 0 };
+
+  function selectScenario(name){
+    var prevMode = viewMode;
+    scrollMem[prevMode] = window.pageYOffset || document.documentElement.scrollTop || 0;
+    selectScenarioCore(name);
+    if (viewMode !== prevMode){
+      var target = scrollMem[viewMode] || 0;
+      window.scrollTo(0, target);
+      requestAnimationFrame(function(){ window.scrollTo(0, target); });
+    }
+  }
+
+  function selectScenarioCore(name){
+    if (name === 'comparativa'){
+      viewMode = 'comparativa';
+      document.querySelectorAll('.pill').forEach(function(p){
+        p.classList.toggle('active', p.getAttribute('data-scenario') === 'comparativa');
+      });
+      toggleViewMode();
+      renderComparativa();
+      updateSummaryTable();
+      return;
+    }
+    viewMode = 'scenario';
+    currentScenario = name;
+    state = scenarioStates[name];
+    document.querySelectorAll('.pill').forEach(function(p){
+      p.classList.toggle('active', p.getAttribute('data-scenario') === name);
+    });
+    toggleViewMode();
+    syncScalarInputs();
+    syncAllCurveInputs();
+    recompute();
+  }
+
+  document.querySelectorAll('.pill').forEach(function(p){
+    p.addEventListener('click', function(){ selectScenario(p.getAttribute('data-scenario')); });
+  });
+  els.resetBtn.addEventListener('click', function(){
+    scenarioStates[currentScenario] = cloneState(PRESETS[currentScenario]);
+    state = scenarioStates[currentScenario];
+    syncScalarInputs();
+    syncAllCurveInputs();
+    recompute();
+  });
+
+  // ---------- comparativa anual ----------
+  function buildCompYearOptions(){
+    var sel = els.compYearSelect;
+    var prevVal = sel.value;
+    sel.innerHTML = '';
+    var optTotal = document.createElement('option');
+    optTotal.value = 'total';
+    optTotal.textContent = STRINGS[LANG].comp_option_total;
+    sel.appendChild(optTotal);
+    for (var i=1;i<=15;i++){
+      var opt = document.createElement('option');
+      opt.value = String(i);
+      opt.textContent = STRINGS[LANG].yearWord + ' ' + i;
+      sel.appendChild(opt);
+    }
+    sel.value = (prevVal && (prevVal === 'total' || (parseInt(prevVal,10)>=1 && parseInt(prevVal,10)<=15))) ? prevVal : 'total';
+  }
+  function fmtRampCell(v){ return localeNum(v,0,0) + '%'; }
+  function fmtTonCell(v){ return localeNum(v/1e6,2,2) + ' Mt'; }
+  function rangeStr(arr, fmt){
+    var mn = Math.min.apply(null, arr), mx = Math.max.apply(null, arr);
+    if (Math.abs(mx-mn) < 1e-9) return fmt(mn);
+    return fmt(mn) + ' – ' + fmt(mx);
+  }
+  function renderComparativa(){
+    var selVal = els.compYearSelect.value || 'total';
+    var isTotal = selVal === 'total';
+    var yearIdx = isTotal ? null : (parseInt(selVal,10) - 1);
+
+    SCN_KEYS.forEach(function(k){
+      var s = scenarioStates[k];
+      var r = computeAll(s);
+      var cuArr = copperArr(s);
+      var capArr = s.ramp.map(function(v){ return v*100; });
+
+      if (isTotal){
+        document.getElementById('comp_precio_'+k).textContent = rangeStr(s.precioCurve, function(v){ return fmtCurveVal(v,'precio'); });
+        document.getElementById('comp_ley_'+k).textContent = rangeStr(s.leyCurve, function(v){ return fmtCurveVal(v,'ley'); });
+        document.getElementById('comp_recup_'+k).textContent = rangeStr(s.recupCurve, function(v){ return fmtCurveVal(v,'recup'); });
+        document.getElementById('comp_capacidad_'+k).textContent = rangeStr(capArr, fmtRampCell);
+        var fcfCellTotal = document.getElementById('comp_fcf_'+k);
+        fcfCellTotal.textContent = rangeStr(r.fcf, fmtUsd);
+        fcfCellTotal.classList.toggle('critical', Math.min.apply(null, r.fcf) < 0);
+        document.getElementById('comp_ton_'+k).textContent = rangeStr(cuArr, fmtTonCu);
+      } else {
+        document.getElementById('comp_precio_'+k).textContent = fmtCurveVal(s.precioCurve[yearIdx], 'precio');
+        document.getElementById('comp_ley_'+k).textContent = fmtCurveVal(s.leyCurve[yearIdx], 'ley');
+        document.getElementById('comp_recup_'+k).textContent = fmtCurveVal(s.recupCurve[yearIdx], 'recup');
+        document.getElementById('comp_capacidad_'+k).textContent = fmtRampCell(capArr[yearIdx]);
+        var fcfCell = document.getElementById('comp_fcf_'+k);
+        fcfCell.textContent = fmtUsd(r.fcf[yearIdx]);
+        fcfCell.classList.toggle('critical', r.fcf[yearIdx] < 0);
+        document.getElementById('comp_ton_'+k).textContent = fmtTonCu(cuArr[yearIdx]);
+      }
+    });
+  }
+  els.compYearSelect.addEventListener('change', renderComparativa);
+
+  // ---------- resumen comparativo ----------
+  function updateSummaryTable(){
+    var results = {};
+    SCN_KEYS.forEach(function(k){ results[k] = computeAll(scenarioStates[k]); });
+    var vanBase = results.base.van;
+
+    SCN_KEYS.forEach(function(k){
+      var r = results[k];
+      var f = fieldStrings(scenarioStates[k]);
+      document.getElementById('sum_cu_'+k).textContent = rangeStr(copperArr(scenarioStates[k]), fmtTonCu);
+      document.getElementById('sum_precio_'+k).textContent = f.precio;
+      document.getElementById('sum_ley_'+k).textContent = f.ley;
+      document.getElementById('sum_recup_'+k).textContent = f.recup;
+      document.getElementById('sum_capex_'+k).innerHTML = withShock(f.capex, f.capexShock);
+      document.getElementById('sum_opex_'+k).innerHTML = withShock(f.opex, f.opexShock);
+      document.getElementById('sum_wacc_'+k).textContent = f.wacc;
+      document.getElementById('sum_ramp_'+k).textContent = f.ramp;
+
+      var vanCell = document.getElementById('sum_van_'+k);
+      vanCell.textContent = fmtUsd(r.van);
+      vanCell.classList.toggle('critical', r.van < 0);
+      document.getElementById('sum_tir_'+k).textContent = r.tir==null ? STRINGS[LANG].na : fmtPct(r.tir,1);
+      document.getElementById('sum_payback_'+k).textContent = r.payback==null ? STRINGS[LANG].na : localeNum(r.payback,2,2)+' '+STRINGS[LANG].years;
+
+      var deltaCell = document.getElementById('sum_delta_'+k);
+      if (k === 'base'){
+        deltaCell.textContent = '—';
+        deltaCell.classList.remove('good','critical');
+      } else {
+        var delta = r.van - vanBase;
+        var meaningful = Math.abs(delta) >= 1; // >= USD 1, avoids float-noise false positives
+        deltaCell.textContent = (delta > 0 ? '+' : '') + fmtUsd(delta);
+        deltaCell.classList.toggle('good', meaningful && delta > 0);
+        deltaCell.classList.toggle('critical', meaningful && delta < 0);
+      }
+
+      // :not(#compTable) excluye la tabla de Comparativa anual — ahí no hay un escenario
+      // "actual" que tenga sentido resaltar, ya que esa vista compara los 4 por igual.
+      var cells = document.querySelectorAll('.summary-table:not(#compTable) [data-col="'+k+'"]');
+      // En la pestaña Comparativa anual no se está viendo ningún escenario puntual, así que
+      // tampoco se resalta ninguna columna acá (solo en modo escenario).
+      var isActive = viewMode === 'scenario' && k === currentScenario;
+      cells.forEach(function(c){ c.classList.toggle('active', isActive); });
+
+      var th = document.querySelector('.summary-table:not(#compTable) th[data-col="'+k+'"]');
+      if (th){
+        th.textContent = STRINGS[LANG]['scn_'+k];
+        if (isActive){
+          var tag = document.createElement('span');
+          tag.className = 'active-tag';
+          tag.textContent = '· ' + STRINGS[LANG].activeWord;
+          th.appendChild(tag);
+        }
+      }
+    });
+  }
+
+  function bindScalar(input, key){
+    input.addEventListener('input', function(){
+      state[key] = parseFloat(input.value)/100;
+      updateReadouts();
+      recompute();
+    });
+  }
+  bindScalar(els.inTon, 'toneladasShock');
+  bindScalar(els.inCapex, 'capexShock');
+  bindScalar(els.inOpex, 'opexShock');
+
+  els.inWacc.addEventListener('input', function(){
+    state.wacc = parseFloat(els.inWacc.value)/100;
+    updateReadouts();
+    recompute();
+  });
+
+  // Tasa de impuesto: es la ÚNICA entrada global, no por escenario — a diferencia del WACC
+  // (que sí puede divergir entre pestañas), acá se decidió una sola tasa compartida por los 4
+  // escenarios, para poder comparar fácilmente "mismo régimen fiscal, distinto escenario de
+  // mercado" vs. "RIGI al 25% en vez del 35% general". Por eso escribe directo en BASE.TASA en
+  // vez de en el estado de un escenario — y recompute() ya recalcula los 4 escenarios en cada
+  // llamada (vía updateSummaryTable), así que el cambio se propaga solo, sin plomería extra.
+  els.inTasa.addEventListener('input', function(){
+    BASE.TASA = parseFloat(els.inTasa.value)/100;
+    els.outTasa.textContent = fmtPct(BASE.TASA, 1);
+    recompute();
+  });
+
+  // ---------- vínculo con Excel ----------
+  // Mapeo de named ranges de Excel -> claves de BASE. Verificado celda a celda contra
+  // Cordillera_Cu_Model_final.xlsx: los 17 valores coinciden exactamente (incluidos signos).
+  var NAMED_FIELDS = {
+    Toneladas_Procesadas: 'TONELADAS', Ley_Cobre: 'LEY', Recuperacion_Metalurgica: 'RECUP',
+    Payability: 'PAYABILITY', Precio_Cobre: 'PRECIO', Factor_Conversion_TnLb: 'FACTOR_CONV',
+    Ley_Concentrado: 'LEY_CONC', TC_Unitario: 'TC_UNIT', RC_Unitario: 'RC_UNIT',
+    Reservas_Totales: 'RESERVAS', Tasa_Impuesto: 'TASA', WACC: 'WACC',
+    CAPEX_Inicial_Total: 'CAPEX', Costo_Mina_Unitario: 'COSTO_MINA_UNIT',
+    Costo_Planta_Unitario: 'COSTO_PLANTA_UNIT', Mano_Obra_Fija: 'MANO_OBRA_FIJA', GA_Fijo: 'GA_FIJO'
+  };
+  // Tasa_Provision_Cierre es opcional: solo la tienen los archivos Excel a los que ya se les
+  // agregó la provisión de cierre de mina (Cordillera_Cu_Model_cierre_mina.xlsx / _scenarios_v2.xlsx).
+  // Si el archivo sincronizado no la tiene, se conserva el 10% por defecto de esta calculadora
+  // en vez de hacer fallar todo el sync por un solo named range ausente.
+  var OPTIONAL_NAMED_FIELDS = { Tasa_Provision_Cierre: 'TASA_CIERRE' };
+  // Hoja "Scenarios": tabla de shocks en columnas C/D/E/F = Base/Optimista/Pesimista/Personalizado.
+  var SCENARIO_COLS = { base: 'C', optimista: 'D', pesimista: 'E', personalizado: 'F' };
+  // Las FILAS de la hoja Scenarios NO son fijas: el usuario (o una edición nuestra) le agrega o
+  // mueve filas cada tanto, y eso ya rompió el vínculo con Excel más de una vez. En vez de hardcodear
+  // números de fila, se buscan por el TEXTO de la etiqueta en la columna A, que se mantuvo estable en
+  // todas las versiones del archivo hasta ahora. Si el usuario también termina renombrando esas
+  // etiquetas, esto va a volver a fallar — pero con un error legible que dice qué texto no encontró,
+  // no una fórmula rota. RAMP_COLS sí es fijo (Año 1..Año 15 = columnas C:Q, no tiene named range propio).
+  var SHOCK_LABELS = {
+    precioShock: 'Precio del cobre', leyShock: 'Ley de cobre', recupShock: 'Recuperación metalúrgica',
+    capexShock: 'CAPEX Inicial Total', opexShock: 'OPEX Total Anual', toneladasShock: 'Toneladas Procesadas'
+  };
+  var SECTION_SUPUESTOS = 'SUPUESTOS POR ESCENARIO';
+  var SECTION_VALORES = 'VALORES RESULTANTES DEL ESCENARIO';
+  var BLOCK_HEADERS = { base: '1. BASE', optimista: '2. OPTIMISTA', pesimista: '3. PESIMISTA', personalizado: '4. PERSONALIZADO' };
+  var RAMP_LABEL = 'Capacidad de Planta en %';
+  var RAMP_COLS = ['C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q'];
+
+  var lastSync = null;      // { fileName, when } tras un import exitoso
+  var lastSyncErrorObj = null; // { key, detail } tras un import fallido
+
+  function readCellNumber(ws, addr, errKey, detail){
+    var cell = ws[addr];
+    var v = cell ? cell.v : undefined;
+    if (typeof v !== 'number' || isNaN(v)) throw { key: errKey, detail: detail };
+    return v;
+  }
+
+  function getNamedCell(wb, name){
+    var names = (wb.Workbook && wb.Workbook.Names) || [];
+    var found = null;
+    for (var i=0;i<names.length;i++){ if (names[i].Name === name){ found = names[i]; break; } }
+    if (!found) throw { key: 'sync_err_missing_name', detail: name };
+    var m = /^(?:'?([^'!]+)'?!)?\$?([A-Z]+)\$?(\d+)$/.exec(found.Ref);
+    if (!m) throw { key: 'sync_err_missing_name', detail: name };
+    var sheetName = m[1] || wb.SheetNames[0];
+    var ws = wb.Sheets[sheetName];
+    if (!ws) throw { key: 'sync_err_missing_name', detail: name };
+    return readCellNumber(ws, m[2]+m[3], 'sync_err_not_number', name);
+  }
+
+  // Igual que getNamedCell, pero devuelve null en vez de lanzar si el named range no existe
+  // en el archivo (para campos opcionales, como Tasa_Provision_Cierre, que no todos los
+  // archivos del usuario tienen todavía).
+  function getNamedCellOptional(wb, name){
+    try { return getNamedCell(wb, name); } catch(e){ return null; }
+  }
+
+  // Rango de filas realmente usado de la hoja (según !ref de SheetJS), con un piso generoso
+  // por si el archivo no trae !ref por algún motivo.
+  function sheetRowRange(ws){
+    var ref = ws['!ref'];
+    if (!ref) return [1, 600];
+    var range = XLSX.utils.decode_range(ref);
+    return [range.s.r + 1, Math.max(range.e.r + 1, 600)];
+  }
+
+  // Primera fila, dentro de [rowStart, rowEnd], cuya columna A empieza con `text` (después de
+  // trim) — así "OPEX Total Anual " (con espacio final) o "Ley de cobre (head grade)" matchean
+  // igual contra "OPEX Total Anual" / "Ley de cobre".
+  function findRowStartingWith(ws, text, rowStart, rowEnd){
+    for (var r = rowStart; r <= rowEnd; r++){
+      var cell = ws['A' + r];
+      if (cell && typeof cell.v === 'string' && cell.v.trim().indexOf(text) === 0) return r;
+    }
+    return null;
+  }
+
+  function readScenarioSheet(wb){
+    var ws = wb.Sheets['Scenarios'];
+    if (!ws) throw { key: 'sync_err_generic' };
+    var range = sheetRowRange(ws);
+    var rMin = range[0], rMax = range[1];
+
+    var supuestosRow = findRowStartingWith(ws, SECTION_SUPUESTOS, rMin, rMax);
+    var valoresRow = findRowStartingWith(ws, SECTION_VALORES, rMin, rMax);
+    if (!supuestosRow || !valoresRow || valoresRow <= supuestosRow){
+      throw { key: 'sync_err_missing_label', detail: SECTION_SUPUESTOS };
+    }
+
+    var shockRows = {};
+    Object.keys(SHOCK_LABELS).forEach(function(field){
+      var r = findRowStartingWith(ws, SHOCK_LABELS[field], supuestosRow, valoresRow);
+      if (!r) throw { key: 'sync_err_missing_label', detail: SHOCK_LABELS[field] };
+      shockRows[field] = r;
+    });
+
+    var shocks = {};
+    SCN_KEYS.forEach(function(k){ shocks[k] = {}; });
+    Object.keys(shockRows).forEach(function(field){
+      var row = shockRows[field];
+      SCN_KEYS.forEach(function(k){
+        var col = SCENARIO_COLS[k];
+        shocks[k][field] = readCellNumber(ws, col+row, 'sync_err_not_number', field+' ('+k+')');
+      });
+    });
+
+    var ramps = {};
+    SCN_KEYS.forEach(function(k){
+      var headerRow = findRowStartingWith(ws, BLOCK_HEADERS[k], rMin, rMax);
+      if (!headerRow) throw { key: 'sync_err_missing_label', detail: BLOCK_HEADERS[k] };
+      var rampRow = findRowStartingWith(ws, RAMP_LABEL, headerRow, headerRow + 20);
+      if (!rampRow) throw { key: 'sync_err_ramp', detail: k };
+      var ramp = [];
+      for (var i=0;i<15;i++){
+        ramp.push(readCellNumber(ws, RAMP_COLS[i]+rampRow, 'sync_err_ramp', k));
+      }
+      ramps[k] = ramp;
+    });
+
+    return { shocks: shocks, ramps: ramps };
+  }
+
+  // Importación transaccional: primero se lee y valida TODO en objetos temporales;
+  // solo si no hay ningún error se pisan BASE/PRESETS/scenarioStates. Así un archivo
+  // con problemas nunca deja la calculadora a medio actualizar.
+  function importFromWorkbook(wb, fileName){
+    var newBase = {};
+    Object.keys(NAMED_FIELDS).forEach(function(excelName){
+      newBase[NAMED_FIELDS[excelName]] = getNamedCell(wb, excelName);
+    });
+    Object.keys(OPTIONAL_NAMED_FIELDS).forEach(function(excelName){
+      var v = getNamedCellOptional(wb, excelName);
+      if (v != null) newBase[OPTIONAL_NAMED_FIELDS[excelName]] = v;
+    });
+    newBase.N_YEARS = 15; // simplificación fija de esta calculadora, no se lee del Excel
+
+    var scn = readScenarioSheet(wb);
+    var newPresets = {};
+    // El Excel todavía guarda Precio/Ley/Recuperación como un shock único (%) por escenario en
+    // la sección SUPUESTOS POR ESCENARIO (no las curvas año a año, que viven en otra sección de
+    // la hoja Scenarios). Por eso el vínculo con Excel sigue leyendo ese shock plano y lo vuelca
+    // acá como una curva PLANA (mismo valor los 15 años) — el usuario puede después editarla año
+    // a año en la calculadora si quiere, sin que eso rompa el sync.
+    SCN_KEYS.forEach(function(k){
+      newPresets[k] = {
+        toneladasShock: scn.shocks[k].toneladasShock,
+        capexShock: scn.shocks[k].capexShock, opexShock: scn.shocks[k].opexShock,
+        wacc: newBase.WACC, ramp: scn.ramps[k].slice(),
+        precioCurve: flatCurve(newBase.PRECIO * (1 + scn.shocks[k].precioShock)),
+        leyCurve: flatCurve(newBase.LEY*100 * (1 + scn.shocks[k].leyShock)),
+        recupCurve: flatCurve(newBase.RECUP*100 * (1 + scn.shocks[k].recupShock))
+      };
+    });
+
+    // commit
+    Object.keys(newBase).forEach(function(k){ BASE[k] = newBase[k]; });
+    DEFAULT_RAMP = newPresets.base.ramp.slice();
+    SCN_KEYS.forEach(function(k){
+      PRESETS[k] = newPresets[k];
+      scenarioStates[k] = cloneState(PRESETS[k]);
+    });
+
+    lastSync = { fileName: fileName, when: new Date() };
+    lastSyncErrorObj = null;
+
+    updateBaseVals();
+    buildAllCurveInputs();
+    selectScenario(currentScenario);
+    renderSyncStatus();
+  }
+
+  function renderSyncStatus(){
+    var el = els.syncStatus;
+    el.classList.remove('ok','error');
+    if (lastSyncErrorObj){
+      el.classList.add('error');
+      var msg = STRINGS[LANG][lastSyncErrorObj.key] || STRINGS[LANG].sync_err_generic;
+      el.textContent = STRINGS[LANG].sync_status_error + msg + (lastSyncErrorObj.detail ? ' ("' + lastSyncErrorObj.detail + '")' : '');
+    } else if (lastSync){
+      el.classList.add('ok');
+      el.textContent = STRINGS[LANG].sync_status_ok + ' "' + lastSync.fileName + '" · ' + lastSync.when.toLocaleString(LOCALE);
+    } else {
+      el.textContent = STRINGS[LANG].sync_status_none;
+    }
+  }
+
+  els.syncBtn.addEventListener('click', function(){
+    els.syncFileInput.value = ''; // permite volver a elegir el mismo archivo para "refrescar"
+    els.syncFileInput.click();
+  });
+  els.syncFileInput.addEventListener('change', function(e){
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    var reader = new FileReader();
+    reader.onload = function(ev){
+      lastSyncErrorObj = null;
+      try{
+        var data = new Uint8Array(ev.target.result);
+        var wb = XLSX.read(data, { type: 'array' });
+        importFromWorkbook(wb, file.name);
+      } catch(err){
+        lastSyncErrorObj = (err && err.key) ? err : { key: 'sync_err_generic' };
+        renderSyncStatus();
+      }
+    };
+    reader.onerror = function(){
+      lastSyncErrorObj = { key: 'sync_err_generic' };
+      renderSyncStatus();
+    };
+    reader.readAsArrayBuffer(file);
+  });
+
+  // ---------- idioma ----------
+  function applyStaticText(){
+    document.querySelectorAll('[data-i18n]').forEach(function(el){
+      var txt = STRINGS[LANG][el.getAttribute('data-i18n')];
+      if (txt !== undefined) el.textContent = txt;
+    });
+  }
+
+  function updateBaseVals(){
+    document.getElementById('baseTon').textContent = 'Base: ' + localeNum(BASE.TONELADAS/1e6,1,1) + STRINGS[LANG].perYearTon;
+    document.getElementById('baseValPrecio').textContent = 'Base: $' + localeNum(BASE.PRECIO,2,2) + '/lb';
+    document.getElementById('baseValLey').textContent = 'Base: ' + localeNum(BASE.LEY*100,3,3) + '% Cu';
+    document.getElementById('baseValRecup').textContent = 'Base: ' + localeNum(BASE.RECUP*100,1,1) + '%';
+    document.getElementById('baseValCapex').textContent = 'Base: $' + localeNum(Math.abs(BASE.CAPEX)/1e6,1,1) + ' M';
+    document.getElementById('baseValWacc').textContent = 'Base: ' + localeNum(BASE.WACC*100,1,1) + '%';
+    document.getElementById('baseValReservas').textContent = STRINGS[LANG].reservasBasePrefix + localeNum(BASE.RESERVAS/1e6,1,1) + ' Mt';
+    document.getElementById('baseValTasa').textContent = 'Base: ' + localeNum(BASE.TASA*100,1,1) + '%';
+    els.inTasa.value = BASE.TASA*100;
+    els.outTasa.textContent = fmtPct(BASE.TASA, 1);
+    document.getElementById('cierreReadout').textContent = localeNum(BASE.TASA_CIERRE*100,1,1) + '% ' + STRINGS[LANG].ofCapex + ' ' + STRINGS[LANG].fixedNotEditable;
+  }
+
+  function setLanguage(lang){
+    LANG = lang;
+    LOCALE = (lang === 'es') ? 'es-AR' : 'en-US';
+    document.documentElement.setAttribute('lang', lang);
+    applyStaticText();
+    updateBaseVals();
+    buildAllCurveInputs();
+    buildCompYearOptions();
+    syncScalarInputs();
+    syncAllCurveInputs();
+    recompute();
+    if (viewMode === 'comparativa') renderComparativa();
+    renderSyncStatus();
+  }
+
+  document.getElementById('langSelect').addEventListener('change', function(e){
+    setLanguage(e.target.value);
+  });
+
+  setLanguage('es');
+})();
+</script>
+
+</body></html>

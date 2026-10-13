@@ -8,7 +8,8 @@ Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordi
 
 | Archivo | Descripción |
 |---|---|
-| [`Cordillera_Cu_Model.xlsx`](Cordillera_Cu_Model.xlsx) | Modelo de evaluación del proyecto (etapa de prefactibilidad, PFS): producción, ingresos, OPEX, CAPEX, impuestos, flujo de caja y valuación. |
+| [`Cordillera_Cu_Model_selector_anio.xlsx`](Cordillera_Cu_Model_selector_anio.xlsx) | Modelo de evaluación del proyecto (etapa de prefactibilidad, PFS): producción, ingresos, OPEX, CAPEX, impuestos, flujo de caja y valuación. |
+| [`calculadora/`](calculadora/) | Calculadora de escenarios interactiva (`index.html`). Necesita `xlsx.core.min.js` en la misma carpeta para leer el modelo Excel. |
 | [`Grafico precio de equilibrio.html`](Grafico%20precio%20de%20equilibrio.html) | Gráfico interactivo del VAN del proyecto en función del precio del cobre, con el precio de equilibrio (VAN = 0). Se abre directamente en el navegador. |
 | [`Informe Tecnico Minero .docx`](Informe%20Tecnico%20Minero%20.docx) | *Minería para profesionales de negocios*: guía práctica que explica la actividad minera desde cero, con banco de preguntas resueltas y glosario. |
 | [`Técnico Minero.pdf`](T%C3%A9cnico%20Minero.pdf) | Material del curso Técnico Minero en el que se basa la guía. |
@@ -63,7 +64,7 @@ En el escenario pesimista, la TIR (9,0%) queda por debajo del WACC (10%) y el VA
 
 ### Calculadora de escenarios
 
-Versión web e interactiva del modelo. Permite simular el proyecto con supuestos propios (capacidad de planta, ramp-up, precio, ley y recuperación año a año, CAPEX, OPEX, WACC y tasa de impuesto) y recalcula en vivo el VAN, la TIR y el payback. Trae cuatro escenarios predefinidos (Base, Optimista, Pesimista y Personalizado), está disponible en español e inglés y puede leer los supuestos directamente desde `Cordillera_Cu_Model.xlsx`. El archivo se procesa en el navegador y no se sube a ningún servidor.
+Versión web e interactiva del modelo. Permite simular el proyecto con supuestos propios (capacidad de planta, ramp-up, precio, ley y recuperación año a año, CAPEX, OPEX, WACC y tasa de impuesto) y recalcula en vivo el VAN, la TIR y el payback. Trae cuatro escenarios predefinidos (Base, Optimista, Pesimista y Personalizado), está disponible en español e inglés y puede leer los supuestos directamente desde el modelo Excel. El archivo se procesa en el navegador y no se sube a ningún servidor.
 
 **Indicadores y flujo de caja libre año por año.** Muestra el VAN, la TIR y el payback del escenario seleccionado, el flujo de caja de cada año (el año 0 es el desembolso de CAPEX) y el flujo acumulado, con el punto de payback marcado.
 
@@ -93,9 +94,10 @@ El modelo se construye por etapas y, en su estado actual, incluye simplificacion
 
 ## Cómo usarlo
 
-1. Abrir `Cordillera_Cu_Model.xlsx` con Microsoft Excel (o compatible).
+1. Abrir `Cordillera_Cu_Model_selector_anio.xlsx` con Microsoft Excel (o compatible).
 2. Modificar únicamente los valores de la hoja **Assumptions**; el resto del modelo se recalcula solo.
-3. Abrir `Grafico precio de equilibrio.html` en cualquier navegador y pasar el mouse sobre la recta para ver el VAN a cada precio.
+3. Para simular escenarios, abrir `calculadora/index.html` en el navegador. Con el botón **Cargar desde Excel** se pueden traer los supuestos exactos del modelo.
+4. Abrir `Grafico precio de equilibrio.html` en cualquier navegador y pasar el mouse sobre la recta para ver el VAN a cada precio.
 
 ## Autor
 
