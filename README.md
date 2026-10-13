@@ -59,17 +59,27 @@ Mientras el EBIT de cada año sea positivo, el VAN es lineal respecto del precio
 
 ![VAN del proyecto en función del precio del cobre](docs/img/grafico-precio-equilibrio.png)
 
-### Supuestos del modelo (hoja *Assumptions*)
+### Calculadora de escenarios
 
-![Hoja Assumptions del modelo](docs/img/excel-assumptions.png)
+Versión web e interactiva del modelo. Permite simular el proyecto con supuestos propios (capacidad de planta, ramp-up, precio, ley y recuperación año a año, CAPEX, OPEX, WACC y tasa de impuesto) y recalcula en vivo el VAN, la TIR y el payback. Trae cuatro escenarios predefinidos (Base, Optimista, Pesimista y Personalizado), está disponible en español e inglés y puede leer los supuestos directamente desde `Cordillera_Cu_Model.xlsx`. El archivo se procesa en el navegador y no se sube a ningún servidor.
 
-### Resultados de valuación y precio de equilibrio (hoja *Valuation*)
+**Indicadores y flujo de caja libre año por año.** Muestra el VAN, la TIR y el payback del escenario seleccionado, el flujo de caja de cada año (el año 0 es el desembolso de CAPEX) y el flujo acumulado, con el punto de payback marcado.
 
-![Hoja Valuation del modelo](docs/img/excel-valuation.png)
+![Calculadora: indicadores y flujo de caja libre](docs/img/calculadora-resumen.png)
 
-### Análisis de sensibilidad: tornado de VAN (±20%) (hoja *Sensitivities*)
+**Producción y mercado.** Capacidad nominal de planta, curva de ramp-up y precio, ley y recuperación metalúrgica editables para cada uno de los 15 años.
 
-![Gráfico tornado de sensibilidad del VAN](docs/img/excel-tornado.png)
+![Calculadora: supuestos de producción y mercado](docs/img/calculadora-produccion-mercado.png)
+
+**Costos, inversión y parámetros financieros.** Sobrecosto o ahorro de CAPEX y OPEX respecto de la PFS, provisión de cierre de mina, control de toneladas extraídas frente a las reservas, WACC y tasa de impuesto a las ganancias.
+
+![Calculadora: costos, inversión y parámetros financieros](docs/img/calculadora-costos-financiero.png)
+
+**Resumen comparativo.** Los cuatro escenarios lado a lado: supuestos, VAN, diferencia de VAN frente al caso Base, TIR y payback.
+
+![Calculadora: resumen comparativo de escenarios](docs/img/calculadora-comparativo.png)
+
+> La calculadora es una herramienta de orientación. Trabaja con una vida de mina fija de 15 años, capital de trabajo en cero y sin escudo fiscal por *Sustaining CAPEX*, por lo que sus resultados pueden diferir de los de la hoja *Valuation* del Excel.
 
 ## Simplificaciones y próximos pasos
 
