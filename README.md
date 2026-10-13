@@ -40,18 +40,20 @@ Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordi
 
 ### Resultados del caso base
 
-Con una vida de mina de 15 años, un WACC del 10% y un precio del cobre de USD 4,20/lb (hoja *Valuation*):
+Resultados de la calculadora de escenarios con sus supuestos por defecto: vida de mina de 15 años, WACC del 10%, tasa de impuesto del 35% y ramp-up de planta estándar (60% → 85% → 100%).
 
-| Indicador | Valor |
-|---|---|
-| VAN (Valor Actual Neto) | ≈ USD 740,4 M |
-| TIR (Tasa Interna de Retorno) | 25,68% |
-| Payback simple | 3,75 años |
-| CAPEX inicial | USD 739,2 M |
-| Precio de equilibrio del cobre (VAN = 0) | USD 2,75/lb |
+| | Base | Optimista | Pesimista |
+|---|---|---|---|
+| Precio del cobre | USD 4,20/lb | USD 4,83/lb | USD 3,57/lb |
+| Ley de cobre | 0,550% Cu | 0,577% Cu | 0,523% Cu |
+| Recuperación metalúrgica | 88,0% | 90,6% | 85,4% |
+| CAPEX inicial | USD 739,2 M | USD 702,2 M (−5%) | USD 813,1 M (+10%) |
+| OPEX anual (100% de capacidad) | USD 135,0 M | USD 135,8 M | USD 139,8 M |
+| **VAN** | **USD 626,7 M** | **USD 1.385,5 M** | **−USD 48,0 M** |
+| **TIR** | **22,2%** | **35,6%** | **9,0%** |
+| **Payback simple** | **4,41 años** | **2,97 años** | **7,94 años** |
 
-Mientras el EBIT de cada año sea positivo, el VAN es lineal respecto del precio:
-`VAN(Precio) = m · Precio + b`, con `m` y `b` tomados de la hoja *Valuation*.
+En el escenario pesimista, la TIR (9,0%) queda por debajo del WACC (10%) y el VAN se vuelve negativo.
 
 ## Capturas
 
@@ -79,7 +81,7 @@ Versión web e interactiva del modelo. Permite simular el proyecto con supuestos
 
 ![Calculadora: resumen comparativo de escenarios](docs/img/calculadora-comparativo.png)
 
-> La calculadora es una herramienta de orientación. Trabaja con una vida de mina fija de 15 años, capital de trabajo en cero y sin escudo fiscal por *Sustaining CAPEX*, por lo que sus resultados pueden diferir de los de la hoja *Valuation* del Excel.
+> La calculadora es una herramienta de orientación. Trabaja con una vida de mina fija de 15 años, capital de trabajo en cero y sin escudo fiscal por *Sustaining CAPEX*. El flujo de caja incluye la provisión de cierre de mina: un pago único en el año 15, equivalente al 10% del CAPEX, sin efecto fiscal.
 
 ## Simplificaciones y próximos pasos
 
