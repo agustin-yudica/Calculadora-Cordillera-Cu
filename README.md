@@ -1,6 +1,6 @@
 # Calculadora Cordillera Cu
 
-Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordillera Cu"), acompañado de una guía técnica de minería pensada para profesionales de negocios y ciencias económicas.
+Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordillera Cu"), con una calculadora web para simular escenarios.
 
 > ⚠️ **Caso educativo.** Ningún dato corresponde a un yacimiento real. Los precios, costos, leyes y reservas son supuestos ilustrativos.
 
@@ -10,9 +10,6 @@ Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordi
 |---|---|
 | [`Cordillera_Cu_Model_selector_anio.xlsx`](Cordillera_Cu_Model_selector_anio.xlsx) | Modelo de evaluación del proyecto (etapa de prefactibilidad, PFS): producción, ingresos, OPEX, CAPEX, impuestos, flujo de caja y valuación. |
 | [`calculadora/`](calculadora/) | Calculadora de escenarios interactiva (`index.html`). Necesita `xlsx.core.min.js` en la misma carpeta para leer el modelo Excel. |
-| [`Grafico precio de equilibrio.html`](Grafico%20precio%20de%20equilibrio.html) | Gráfico interactivo del VAN del proyecto en función del precio del cobre, con el precio de equilibrio (VAN = 0). Se abre directamente en el navegador. |
-| [`Informe Tecnico Minero .docx`](Informe%20Tecnico%20Minero%20.docx) | *Minería para profesionales de negocios*: guía práctica que explica la actividad minera desde cero, con banco de preguntas resueltas y glosario. |
-| [`Técnico Minero.pdf`](T%C3%A9cnico%20Minero.pdf) | Material del curso Técnico Minero en el que se basa la guía. |
 
 ## El proyecto Cordillera Cu
 
@@ -58,10 +55,6 @@ En el escenario pesimista, la TIR (9,0%) queda por debajo del WACC (10%) y el VA
 
 ## Capturas
 
-### Gráfico interactivo: VAN vs. precio del cobre
-
-![VAN del proyecto en función del precio del cobre](docs/img/grafico-precio-equilibrio.png)
-
 ### Calculadora de escenarios
 
 Versión web e interactiva del modelo. Permite simular el proyecto con supuestos propios (capacidad de planta, ramp-up, precio, ley y recuperación año a año, CAPEX, OPEX, WACC y tasa de impuesto) y recalcula en vivo el VAN, la TIR y el payback. Trae cuatro escenarios predefinidos (Base, Optimista, Pesimista y Personalizado), está disponible en español e inglés y puede leer los supuestos directamente desde el modelo Excel. El archivo se procesa en el navegador y no se sube a ningún servidor.
@@ -97,7 +90,6 @@ El modelo se construye por etapas y, en su estado actual, incluye simplificacion
 1. Abrir `Cordillera_Cu_Model_selector_anio.xlsx` con Microsoft Excel (o compatible).
 2. Modificar únicamente los valores de la hoja **Assumptions**; el resto del modelo se recalcula solo.
 3. Para simular escenarios, abrir `calculadora/index.html` en el navegador. Con el botón **Cargar desde Excel** se pueden traer los supuestos exactos del modelo.
-4. Abrir `Grafico precio de equilibrio.html` en cualquier navegador y pasar el mouse sobre la recta para ver el VAN a cada precio.
 
 ## Autor
 
