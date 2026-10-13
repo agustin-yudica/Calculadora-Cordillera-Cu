@@ -93,4 +93,4 @@ El modelo se construye por etapas y, en su estado actual, incluye simplificacion
 
 ## Autor
 
-Agustín Yudica Sedano — Analista Financiero Junior / Project Evaluation Analyst
+Agustín Yudica Sedano — Analista Financiero / Project Evaluation
