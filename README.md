@@ -2,6 +2,8 @@
 
 Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordillera Cu"), con una calculadora web para simular escenarios.
 
+👉 **[Abrir la calculadora online](https://claude.ai/artifact/SBurLoDMndcR4aPSGaHeeg)**
+
 > ⚠️ **Caso educativo.** Ningún dato corresponde a un yacimiento real. Los precios, costos, leyes y reservas son supuestos ilustrativos.
 
 ## Contenido del repositorio
@@ -91,7 +93,7 @@ El modelo se construye por etapas y, en su estado actual, incluye simplificacion
 
 1. Abrir `Cordillera_Cu_Model_selector_anio.xlsx` con Microsoft Excel (o compatible).
 2. Modificar únicamente los valores de la hoja **Assumptions**; el resto del modelo se recalcula solo.
-3. Para simular escenarios, abrir `calculadora/index.html` en el navegador. Con el botón **Cargar desde Excel** se pueden traer los supuestos exactos del modelo.
+3. Para simular escenarios, abrir la [**calculadora online**](https://claude.ai/artifact/SBurLoDMndcR4aPSGaHeeg), que no requiere instalar nada. También se puede abrir `calculadora/index.html` localmente en el navegador. Con el botón **Cargar desde Excel** se pueden traer los supuestos exactos del modelo.
 
 ## Autor
 
