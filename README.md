@@ -8,8 +8,9 @@ Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordi
 
 | Archivo | Descripción |
 |---|---|
-| [`Cordillera_Cu_Model_selector_anio.xlsx`](Cordillera_Cu_Model_selector_anio.xlsx) | Modelo de evaluación del proyecto (etapa de prefactibilidad, PFS): producción, ingresos, OPEX, CAPEX, impuestos, flujo de caja y valuación. |
+| [`Cordillera_Cu_Model_selector_anio.xlsx`](Cordillera_Cu_Model_selector_anio.xlsx) | Modelo de evaluación del proyecto (etapa de prefactibilidad, PFS): producción, ingresos, OPEX, CAPEX, impuestos, flujo de caja, valuación, sensibilidades y escenarios. |
 | [`calculadora/`](calculadora/) | Calculadora de escenarios interactiva (`index.html`). Necesita `xlsx.core.min.js` en la misma carpeta para leer el modelo Excel. |
+| [`docs/img/`](docs/img/) | Capturas de la calculadora usadas en este README. |
 
 ## El proyecto Cordillera Cu
 
@@ -31,39 +32,39 @@ Modelo económico-financiero de un proyecto minero de cobre **ficticio** ("Cordi
 6. **CAPEX** / **CAPEX Detail** – Inversión inicial (mina, planta, infraestructura, EPCM y contingencia) desagregada por componente.
 7. **Taxes** – Impuesto a las ganancias simplificado, con piso en cero.
 8. **Cash Flow** – Flujo de caja libre del proyecto, incluyendo provisión de cierre de mina.
-9. **Valuation** – VAN y métricas de valuación descontadas al WACC.
-10. **Sensitivities** – Sensibilidad del resultado a las variables clave.
-11. **Scenarios** – Comparación de escenarios.
+9. **Valuation** – VAN, TIR y payback descontados al WACC.
+10. **Sensitivities** – Sensibilidad del VAN a las variables clave (precio, ley, recuperación, CAPEX y OPEX), con un cuadro resumen de variaciones de ±20 %.
+11. **Scenarios** – Comparación de escenarios (Base, Optimista, Pesimista y Personalizado), con selector de año.
 12. **Dashboard** – Resumen visual de los resultados.
 
 ### Resultados del caso base
 
-Resultados de la calculadora de escenarios con sus supuestos por defecto: vida de mina de 15 años, WACC del 10%, tasa de impuesto del 35% y ramp-up de planta estándar (60% → 85% → 100%).
+Resultados de la calculadora de escenarios con sus supuestos por defecto: vida de mina de 15 años, WACC del 10 %, tasa de impuesto del 35 % y ramp-up de planta estándar (60 % → 85 % → 100 %).
 
 | | Base | Optimista | Pesimista |
 |---|---|---|---|
 | Precio del cobre | USD 4,20/lb | USD 4,83/lb | USD 3,57/lb |
-| Ley de cobre | 0,550% Cu | 0,577% Cu | 0,523% Cu |
-| Recuperación metalúrgica | 88,0% | 90,6% | 85,4% |
-| CAPEX inicial | USD 739,2 M | USD 702,2 M (−5%) | USD 813,1 M (+10%) |
-| OPEX anual (100% de capacidad) | USD 135,0 M | USD 135,8 M | USD 139,8 M |
+| Ley de cobre | 0,550 % Cu | 0,577 % Cu | 0,523 % Cu |
+| Recuperación metalúrgica | 88,0 % | 90,6 % | 85,4 % |
+| CAPEX inicial | USD 739,2 M | USD 702,2 M (−5 %) | USD 813,1 M (+10 %) |
+| OPEX anual (100 % de capacidad) | USD 135,0 M | USD 135,8 M | USD 139,8 M |
 | **VAN** | **USD 626,7 M** | **USD 1.385,5 M** | **−USD 48,0 M** |
-| **TIR** | **22,2%** | **35,6%** | **9,0%** |
+| **TIR** | **22,2 %** | **35,6 %** | **9,0 %** |
 | **Payback simple** | **4,41 años** | **2,97 años** | **7,94 años** |
 
-En el escenario pesimista, la TIR (9,0%) queda por debajo del WACC (10%) y el VAN se vuelve negativo.
+En el escenario pesimista, la TIR (9,0 %) queda por debajo del WACC (10 %) y el VAN se vuelve negativo.
 
-## Capturas
+## Calculadora de escenarios
 
-### Calculadora de escenarios
+Versión web e interactiva del modelo. Permite simular el proyecto con supuestos propios (capacidad de planta, ramp-up, precio, ley y recuperación año a año, CAPEX, OPEX, WACC y tasa de impuesto) y recalcula en vivo el VAN, la TIR y el payback. Trae cuatro escenarios predefinidos (Base, Optimista, Pesimista y Personalizado) y una **comparativa año a año** de los cuatro escenarios. Está disponible en español e inglés y puede leer los supuestos directamente desde el modelo Excel con el botón **Cargar desde Excel**. El archivo se procesa en el navegador y no se sube a ningún servidor.
 
-Versión web e interactiva del modelo. Permite simular el proyecto con supuestos propios (capacidad de planta, ramp-up, precio, ley y recuperación año a año, CAPEX, OPEX, WACC y tasa de impuesto) y recalcula en vivo el VAN, la TIR y el payback. Trae cuatro escenarios predefinidos (Base, Optimista, Pesimista y Personalizado), está disponible en español e inglés y puede leer los supuestos directamente desde el modelo Excel. El archivo se procesa en el navegador y no se sube a ningún servidor.
+**Selector de caso.** Además de Cordillera Cu, la calculadora incluye un segundo caso en el selector, *PSJ Cobre Mendocino* (solo cobre). Se armó a partir de una variante del mismo modelo, con calendario de construcción propio (CAPEX repartido entre los Años 0 y 1, producción desde el Año 2 y 15 años de operación) y su propio vínculo con Excel. El Excel de esa variante no forma parte de este repositorio: el modelo de origen es Cordillera Cu.
 
 **Indicadores y flujo de caja libre año por año.** Muestra el VAN, la TIR y el payback del escenario seleccionado, el flujo de caja de cada año (el año 0 es el desembolso de CAPEX) y el flujo acumulado, con el punto de payback marcado.
 
 ![Calculadora: indicadores y flujo de caja libre](docs/img/calculadora-resumen.png)
 
-**Producción y mercado.** Capacidad nominal de planta, curva de ramp-up y precio, ley y recuperación metalúrgica editables para cada uno de los 15 años.
+**Producción y mercado.** Capacidad nominal de planta, curva de ramp-up y precio, ley y recuperación metalúrgica editables para cada año.
 
 ![Calculadora: supuestos de producción y mercado](docs/img/calculadora-produccion-mercado.png)
 
@@ -71,19 +72,20 @@ Versión web e interactiva del modelo. Permite simular el proyecto con supuestos
 
 ![Calculadora: costos, inversión y parámetros financieros](docs/img/calculadora-costos-financiero.png)
 
-**Resumen comparativo.** Los cuatro escenarios lado a lado: supuestos, VAN, diferencia de VAN frente al caso Base, TIR y payback.
+**Resumen comparativo.** Los cuatro escenarios lado a lado sobre todo el proyecto: supuestos (con bandas "mínimo – máximo" cuando un valor cambia de un año a otro), VAN, diferencia de VAN frente al caso Base, TIR y payback.
 
 ![Calculadora: resumen comparativo de escenarios](docs/img/calculadora-comparativo.png)
 
-> La calculadora es una herramienta de orientación. Trabaja con una vida de mina fija de 15 años, capital de trabajo en cero y sin escudo fiscal por *Sustaining CAPEX*. El flujo de caja incluye la provisión de cierre de mina: un pago único en el año 15, equivalente al 10% del CAPEX, sin efecto fiscal.
+> La calculadora es una herramienta de orientación. En el caso Cordillera trabaja con una vida de mina fija de 15 años, capital de trabajo en cero y sin escudo fiscal por *Sustaining CAPEX*. El flujo de caja incluye la provisión de cierre de mina: un pago único en el último año, equivalente al 10 % del CAPEX, sin efecto fiscal.
 
 ## Simplificaciones y próximos pasos
 
 El modelo se construye por etapas y, en su estado actual, incluye simplificaciones deliberadas:
 
-- Tasa única de impuesto a las ganancias, sin escala progresiva, regalías provinciales ni otros tributos (previstos para una etapa posterior).
-- WACC simplificado, no derivado de una estructura de capital real (la construcción del WACC y el *Project Finance* están previstos para una etapa posterior).
+- Tasa única de impuesto a las ganancias, sin escala progresiva, regalías provinciales ni otros tributos, y sin arrastre de pérdidas (previstos para una etapa posterior).
+- WACC simplificado, no derivado de una estructura de capital real. Próximo paso: una hoja de WACC con costo del capital propio (CAPM) y estructura de capital, y luego *Project Finance*.
 - Costo de acarreo plano, aunque en la realidad crece con la profundidad del pit.
+- Capital de trabajo en cero.
 
 ## Cómo usarlo
 

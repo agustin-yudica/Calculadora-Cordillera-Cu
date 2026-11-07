@@ -1,4 +1,3 @@
-<!doctype html><html><head><meta charset=utf8><meta name=viewport content="width=device-width,initial-scale=1,viewport-fit=cover"><style>:root{color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}html{scroll-padding-top:env(safe-area-inset-top,0px)}body{margin:0;padding:0;font:14px -apple-system,BlinkMacSystemFont,sans-serif;background:#fff;color:#000}img{max-width:100%}[hidden]:not([hidden=until-found i]){display:none!important}</style></head><body>
 <title>Calculadora Cordillera Cu</title>
 <style>
   :root{
@@ -69,6 +68,8 @@
     border:1px solid var(--border); border-radius:8px; padding:8px 12px; cursor:pointer;
   }
   .reset-btn:hover{ border-color:var(--accent); color:var(--accent-strong); }
+  .header-controls{ display:flex; flex-direction:column; gap:8px; align-items:stretch; flex-shrink:0; }
+  .case-note{ font-size:12.5px; color:var(--muted, #6b7280); margin:-4px 0 14px; line-height:1.5; }
   .lang-select{
     font-family:"IBM Plex Sans"; font-size:13px; color:var(--text); background:var(--surface);
     border:1px solid var(--border); border-radius:8px; padding:8px 10px; cursor:pointer;
@@ -147,7 +148,7 @@
   .ramp-panel .base-val{ display:block; font-size:11.5px; color:var(--muted); margin:2px 0 8px; }
 
   .ramp-panel .ramp-row{
-    display:grid; grid-template-columns:repeat(15,minmax(44px,1fr)); gap:6px; margin-top:6px;
+    display:grid; grid-template-columns:repeat(var(--ny,15),minmax(44px,1fr)); gap:6px; margin-top:6px;
   }
   .ramp-cell{ display:flex; flex-direction:column; align-items:center; gap:4px; }
   .ramp-cell label{ font-size:10.5px; color:var(--muted); font-family:"IBM Plex Mono",monospace; }
@@ -244,11 +245,18 @@
       <p class="subtitle" data-i18n="subtitle">Simulá el pórfido de cobre Cordillera con tus propios parámetros — capacidad de planta, precio, ley y recuperación año a año, CAPEX, OPEX y tasa de impuesto — y mirá en vivo el VAN, la TIR y el Payback.</p>
       <p class="byline" data-i18n="byline">Por Agustín Yúdica · agustinyudica@gmail.com</p>
     </div>
-    <select id="langSelect" class="lang-select" aria-label="Idioma / Language">
-      <option value="es">Español</option>
-      <option value="en">English</option>
-    </select>
+    <div class="header-controls">
+      <select id="caseSelect" class="lang-select" aria-label="Caso / Case">
+        <option value="cordillera">Cordillera Cu (ficticio)</option>
+        <option value="psj">PSJ Cobre Mendocino</option>
+      </select>
+      <select id="langSelect" class="lang-select" aria-label="Idioma / Language">
+        <option value="es">Español</option>
+        <option value="en">English</option>
+      </select>
+    </div>
   </header>
+  <p class="case-note" id="caseNote"></p>
 
   <div class="panel sync-panel" id="syncPanel">
     <h2 data-i18n="sync_h2">Vincular con tu Excel</h2>
@@ -567,14 +575,50 @@
 (function(){
   "use strict";
 
-  var BASE = {
-    TONELADAS: 10000000, LEY: 0.0055, RECUP: 0.88, PAYABILITY: 0.965,
-    PRECIO: 4.2, FACTOR_CONV: 2204.62, LEY_CONC: 0.3, TC_UNIT: 80, RC_UNIT: 0.08,
-    RESERVAS: 150000000, TASA: 0.35, WACC: 0.10,
-    COSTO_MINA_UNIT: 3.2, COSTO_PLANTA_UNIT: 4.7,
-    MANO_OBRA_FIJA: -11000000, GA_FIJO: -45000000,
-    CAPEX: -739200000, N_YEARS: 15, TASA_CIERRE: 0.10
+  // Casos disponibles. Cada caso trae su BASE completo; el resto de la calculadora (presets de
+  // escenarios, curvas, textos "Base: ...") se reconstruye a partir de él al cambiar de caso.
+  // PSJ = valores de PSJ_Cobre_Mendocino_Model.xlsx (datos públicos + supuestos del analista).
+  var CASES = {
+    cordillera: {
+      name: 'Cordillera Cu', file: 'Cordillera_Cu_Model.xlsx',
+      BASE: {
+        TONELADAS: 10000000, LEY: 0.0055, RECUP: 0.88, PAYABILITY: 0.965,
+        PRECIO: 4.2, FACTOR_CONV: 2204.62, LEY_CONC: 0.3, TC_UNIT: 80, RC_UNIT: 0.08,
+        RESERVAS: 150000000, TASA: 0.35, WACC: 0.10,
+        COSTO_MINA_UNIT: 3.2, COSTO_PLANTA_UNIT: 4.7,
+        MANO_OBRA_FIJA: -11000000, GA_FIJO: -45000000,
+        CAPEX: -739200000, N_YEARS: 15, TASA_CIERRE: 0.10,
+        CAPEX_PCT0: 1, FIJO_SOLO_PROD: false
+      },
+      ramp: [0.6,0.85,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      note: {
+        es: 'Caso ficticio con fines educativos: ningún dato corresponde a un yacimiento real.',
+        en: 'Fictional case for educational purposes: no figure corresponds to a real deposit.'
+      }
+    },
+    psj: {
+      name: 'PSJ Cobre Mendocino', file: 'PSJ_Cobre_Mendocino_Model.xlsx',
+      BASE: {
+        TONELADAS: 9855000, LEY: 0.0061, RECUP: 0.68, PAYABILITY: 0.965,
+        PRECIO: 4.2, FACTOR_CONV: 2204.62, LEY_CONC: 0.285, TC_UNIT: 80, RC_UNIT: 0.08,
+        RESERVAS: 157261000, TASA: 0.25, WACC: 0.10,
+        COSTO_MINA_UNIT: 3.1, COSTO_PLANTA_UNIT: 4.45,
+        MANO_OBRA_FIJA: -12000000, GA_FIJO: -33600000,
+        CAPEX: -809984000, N_YEARS: 16, TASA_CIERRE: 0.10,
+        // Cronograma PSJ (igual que el Excel): CAPEX 50% en el Año 0 y 50% en el Año 1; producción
+        // desde el Año 2; los costos fijos (mano de obra y G&A) se pagan todos los años, incluida la construcción.
+        CAPEX_PCT0: 0.5, FIJO_SOLO_PROD: true
+      },
+      ramp: [0,0.6,0.85,1,1,1,1,1,1,1,1,1,1,1,1,1],
+      note: {
+        es: 'Simulación educativa del proyecto PSJ Cobre Mendocino (solo cobre). Datos públicos: 27.000 t/día, reservas 157 Mt, ley 0,61 % Cu, ~40,8 kt Cu/año, CAPEX ~USD 810 M. Supuestos propios (no publicados): recuperación 68 %, precio, TC/RC, OPEX unitarios, impuesto 25 %.',
+        en: 'Educational simulation of the PSJ Cobre Mendocino project (copper only). Public data: 27,000 t/day, 157 Mt reserves, 0.61% Cu grade, ~40.8 kt Cu/year, CAPEX ~USD 810 M. Own assumptions (not published): 68% recovery, price, TC/RC, unit OPEX, 25% tax.'
+      }
+    }
   };
+  var curCase = 'cordillera';
+  var BASE = {};
+  Object.keys(CASES.cordillera.BASE).forEach(function(k){ BASE[k] = CASES.cordillera.BASE[k]; });
 
   // ---------- idioma / número ----------
   var LANG = 'es';
@@ -618,12 +662,12 @@
       financiero_hint: 'Tasa de descuento usada para el VAN y la comparación con la TIR, y tasa de impuesto a las ganancias.',
       lbl_wacc: 'WACC', lbl_taxrate: 'Tasa de impuesto a las ganancias',
       comparativa_h2: 'Comparativa anual',
-      comparativa_hint: 'Compará los 4 escenarios en un año puntual (o en todo el proyecto), con los supuestos que tenga cada uno cargado ahora.',
+      comparativa_hint: 'Compará los 4 escenarios año a año, con los supuestos que tenga cada uno cargado ahora. Para ver el proyecto completo, mirá el Resumen comparativo.',
       comp_year_label: 'Año a comparar',
       comp_option_total: 'Todo el proyecto',
       comp_col_capacidad: 'Capacidad de planta', comp_col_fcf: 'FCF del año', comp_col_ton: 'Cobre fino recuperado, por año', formula_cu: '(Tn procesadas × Ley × Recuperación)',
       resumen_h2: 'Resumen comparativo',
-      resumen_hint: 'Compara los 4 escenarios a la vez, con los supuestos que tenga cada uno cargado ahora.',
+      resumen_hint: 'Compara los 4 escenarios a la vez sobre todo el proyecto (los 15 años). Si un valor cambia de un año a otro, se muestra como banda “mínimo – máximo”; si es igual todos los años, un único valor.',
       resumen_hint2: 'La columna resaltada es la que estás viendo.',
       subhead_supuestos: 'Supuestos editados', subhead_resultados: 'Resultados',
       rowlabel_cu: 'Cobre fino recuperado, por año', rowlabel_precio: 'Precio del cobre', rowlabel_ley: 'Ley de cobre',
@@ -692,12 +736,12 @@
       financiero_hint: 'Discount rate used for the NPV and the comparison with the IRR, and the income tax rate.',
       lbl_wacc: 'WACC', lbl_taxrate: 'Income tax rate',
       comparativa_h2: 'Annual comparison',
-      comparativa_hint: "Compare all 4 scenarios at a specific year (or across the entire project), with whatever assumptions each one currently has loaded.",
+      comparativa_hint: "Compare all 4 scenarios year by year, with whatever assumptions each one currently has loaded. For the whole project, see the Comparative summary.",
       comp_year_label: 'Year to compare',
       comp_option_total: 'Entire project',
       comp_col_capacidad: 'Plant capacity', comp_col_fcf: "Year's FCF", comp_col_ton: 'Recovered copper metal, per year', formula_cu: '(Tonnes processed × Grade × Recovery)',
       resumen_h2: 'Comparative summary',
-      resumen_hint: "Compares all 4 scenarios at once, with whatever assumptions each one currently has loaded.",
+      resumen_hint: "Compares all 4 scenarios at once over the whole project (all 15 years). If a value changes from year to year it is shown as a “min – max” band; if it is the same every year, a single value.",
       resumen_hint2: "The highlighted column is the one you're viewing.",
       subhead_supuestos: 'Edited assumptions', subhead_resultados: 'Results',
       rowlabel_cu: 'Recovered copper metal, per year', rowlabel_precio: 'Copper price', rowlabel_ley: 'Copper grade',
@@ -754,7 +798,8 @@
       var rc = -metalPagableLb * BASE.RC_UNIT;
       var costoMina = -tonI * BASE.COSTO_MINA_UNIT;
       var costoPlanta = -tonI * BASE.COSTO_PLANTA_UNIT;
-      var opexI = (costoMina + costoPlanta + BASE.MANO_OBRA_FIJA + BASE.GA_FIJO) * (1 + p.opexShock);
+      var fijo = BASE.MANO_OBRA_FIJA + BASE.GA_FIJO;   // costos fijos: se pagan todos los años, también en la construcción
+      var opexI = (costoMina + costoPlanta + fijo) * (1 + p.opexShock);
       var nsr = ingresoBruto + tc + rc;
       var ebitda = nsr + opexI;
       var deprec = p.capex * (tonI / BASE.RESERVAS);
@@ -763,7 +808,9 @@
       // Provisión de cierre de mina: pago único en el último año (10% del CAPEX propio del
       // escenario, sin efecto fiscal — igual tratamiento que en Cash Flow!Q32/Scenarios del Excel).
       var cierre = (i === BASE.N_YEARS - 1) ? p.capex * BASE.TASA_CIERRE : 0;
-      fcf.push(ebitda + tax + cierre);
+      // Parte del CAPEX que se desembolsa en el Año 1 (el resto sale en el Año 0)
+      var capexY1 = (i === 0) ? p.capex * (1 - BASE.CAPEX_PCT0) : 0;
+      fcf.push(ebitda + tax + cierre + capexY1);
     }
     return fcf;
   }
@@ -782,15 +829,24 @@
       for (var i=0;i<cashflows.length;i++) s += cashflows[i] / Math.pow(1+rr, i);
       return s;
     }
-    var lo = -0.9999, hi = 100;
-    var flo = f(lo), fhi = f(hi);
-    if (isNaN(flo) || isNaN(fhi) || flo*fhi > 0) return { van: van, tir: null };
-    for (var it=0; it<200; it++){
-      var mid = (lo+hi)/2, fmid = f(mid);
-      if (Math.abs(fmid) < 1e-6){ lo = hi = mid; break; }
-      if (flo*fmid < 0){ hi = mid; fhi = fmid; } else { lo = mid; flo = fmid; }
+    // Barrido de la tasa para encontrar los cambios de signo y quedarse con la raíz más cercana
+    // al 10% (como el IRR de Excel, que arranca de esa semilla). Así también converge cuando el
+    // último flujo es negativo (provisión de cierre) y no hay cambio de signo entre los extremos.
+    var best = null, bestDist = Infinity, prevR = -0.95, prevF = f(prevR);
+    for (var r = -0.945; r <= 10; r += 0.005){
+      var fr = f(r);
+      if (!isNaN(prevF) && !isNaN(fr) && prevF*fr <= 0){
+        var lo = prevR, hi = r, flo = prevF;
+        for (var it=0; it<100; it++){
+          var mid = (lo+hi)/2, fm = f(mid);
+          if (flo*fm <= 0){ hi = mid; } else { lo = mid; flo = fm; }
+        }
+        var root = (lo+hi)/2, dist = Math.abs(root-0.1);
+        if (dist < bestDist){ best = root; bestDist = dist; }
+      }
+      prevR = r; prevF = fr;
     }
-    return { van: van, tir: (lo+hi)/2 };
+    return { van: van, tir: best };
   }
 
   function paybackSimple(fcf, capex){
@@ -813,11 +869,15 @@
       precioCurve: state.precioCurve, leyCurve: state.leyCurve, recupCurve: state.recupCurve
     };
     var fcf = buildFcf(state.ramp, p);
-    var vt = vanTir(fcf, capex, wacc);
-    var payback = paybackSimple(fcf, capex);
+    // Flujo del Año 0: CAPEX del Año 0 + (en el modelo PSJ) costos fijos de mano de obra y G&A, que
+    // se pagan igual durante la construcción (sin impuesto: el EBIT es negativo).
+    var fijo0 = BASE.FIJO_SOLO_PROD ? (BASE.MANO_OBRA_FIJA + BASE.GA_FIJO) * (1 + state.opexShock) : 0;
+    var capex0 = capex * BASE.CAPEX_PCT0 + fijo0;
+    var vt = vanTir(fcf, capex0, wacc);
+    var payback = paybackSimple(fcf, capex0);
     var tonExtracted = 0;
     for (var i=0;i<state.ramp.length;i++) tonExtracted += toneladas * state.ramp[i];
-    return { van: vt.van, tir: vt.tir, payback: payback, fcf: fcf, capex: capex, tonExtracted: tonExtracted, wacc: wacc };
+    return { van: vt.van, tir: vt.tir, payback: payback, fcf: fcf, capex: capex, capex0: capex0, tonExtracted: tonExtracted, wacc: wacc };
   }
 
   // ---------- presets ----------
@@ -826,21 +886,40 @@
   // viejo shock único (%) que tenía cada preset antes de que Precio/Ley/Recuperación pasaran
   // a ser editables año a año. Con esto el preset de cada escenario reproduce exactamente el
   // mismo VAN/TIR/Payback que antes del refactor.
-  function flatCurve(v){
+  function flatCurve(v, n){
     var a = [];
-    for (var i=0;i<15;i++) a.push(v);
+    if (n === undefined) n = BASE.N_YEARS;
+    for (var i=0;i<n;i++) a.push(v);
     return a;
   }
-  var PRESETS = {
-    base:          { toneladasShock:0,    capexShock:0,    opexShock:0,    wacc:0.10, ramp: DEFAULT_RAMP.slice(),
-                      precioCurve: flatCurve(BASE.PRECIO), leyCurve: flatCurve(BASE.LEY*100), recupCurve: flatCurve(BASE.RECUP*100) },
-    optimista:     { toneladasShock:0.10, capexShock:-0.05, opexShock:-0.05, wacc:0.10, ramp: DEFAULT_RAMP.slice(),
-                      precioCurve: flatCurve(BASE.PRECIO*1.15), leyCurve: flatCurve(BASE.LEY*100*1.05), recupCurve: flatCurve(BASE.RECUP*100*1.03) },
-    pesimista:     { toneladasShock:-0.10,capexShock:0.10,  opexShock:0.10,  wacc:0.10, ramp: DEFAULT_RAMP.slice(),
-                      precioCurve: flatCurve(BASE.PRECIO*0.85), leyCurve: flatCurve(BASE.LEY*100*0.95), recupCurve: flatCurve(BASE.RECUP*100*0.97) },
-    personalizado: { toneladasShock:0,    capexShock:0,    opexShock:0,    wacc:0.10, ramp: DEFAULT_RAMP.slice(),
-                      precioCurve: flatCurve(BASE.PRECIO), leyCurve: flatCurve(BASE.LEY*100), recupCurve: flatCurve(BASE.RECUP*100) }
+  // Shocks de cada escenario respecto del caso base (mismos que la tabla "SUPUESTOS POR
+  // ESCENARIO" de la hoja Scenarios del Excel de cada caso). Precio/Ley/Recuperación son shocks
+  // relativos y se vuelcan como curva plana; los demás mueven toneladas, CAPEX y OPEX.
+  var SHOCKS = {
+    cordillera: {
+      base:          { ton:0,    capex:0,     opex:0,     precio:0,     ley:0,     recup:0 },
+      optimista:     { ton:0.10, capex:-0.05, opex:-0.05, precio:0.15,  ley:0.05,  recup:0.03 },
+      pesimista:     { ton:-0.10,capex:0.10,  opex:0.10,  precio:-0.15, ley:-0.05, recup:-0.03 },
+      personalizado: { ton:0,    capex:0,     opex:0,     precio:0,     ley:0,     recup:0 }
+    },
+    psj: {   // = Scenarios!C6:F11 de PSJ_Cobre_Mendocino_Model.xlsx
+      base:          { ton:0,     capex:0,     opex:0,     precio:0,    ley:0,     recup:0 },
+      optimista:     { ton:0.13,  capex:-0.05, opex:-0.05, precio:0.20, ley:0.05,  recup:0.03 },
+      pesimista:     { ton:-0.25, capex:0.10,  opex:0.10,  precio:0,    ley:-0.15, recup:-0.09 },
+      personalizado: { ton:0,     capex:0,     opex:0,     precio:0,    ley:0,     recup:0 }
+    }
   };
+  function makePresets(){
+    var table = SHOCKS[curCase], out = {};
+    ['base','optimista','pesimista','personalizado'].forEach(function(k){
+      var x = table[k];
+      out[k] = { toneladasShock:x.ton, capexShock:x.capex, opexShock:x.opex, wacc:BASE.WACC, ramp: DEFAULT_RAMP.slice(),
+                 precioCurve: flatCurve(BASE.PRECIO*(1+x.precio)), leyCurve: flatCurve(BASE.LEY*100*(1+x.ley)),
+                 recupCurve: flatCurve(BASE.RECUP*100*(1+x.recup)) };
+    });
+    return out;
+  }
+  var PRESETS = makePresets();
 
   function cloneState(s){
     return {
@@ -925,7 +1004,8 @@
     var spec = CURVE_SPECS[curveName];
     var row = document.getElementById(spec.rowId);
     row.innerHTML = "";
-    for (var i=0;i<15;i++){
+    row.style.setProperty('--ny', String(BASE.N_YEARS));
+    for (var i=0;i<BASE.N_YEARS;i++){
       var cell = document.createElement('div');
       cell.className = 'ramp-cell';
       var label = document.createElement('label');
@@ -949,7 +1029,7 @@
   }
   function syncCurveInputs(curveName){
     var spec = CURVE_SPECS[curveName];
-    for (var i=0;i<15;i++){
+    for (var i=0;i<BASE.N_YEARS;i++){
       document.getElementById(spec.rowId+i).value = round(spec.toCell(state[spec.stateKey][i]), spec.decimals);
     }
     drawCurveSvg(curveName);
@@ -971,8 +1051,8 @@
       if (hi - lo < 1e-9) hi = lo + 1;
     }
     var pts = [];
-    for (var i=0;i<15;i++){
-      var x = pad + (i/14) * (w - 2*pad);
+    for (var i=0;i<BASE.N_YEARS;i++){
+      var x = pad + (i/(BASE.N_YEARS-1)) * (w - 2*pad);
       var y = h - pad - ((arr[i]-lo)/(hi-lo)) * (h - 2*pad);
       pts.push(x.toFixed(1)+","+y.toFixed(1));
     }
@@ -1165,7 +1245,7 @@
 
   function summarizeRamp(ramp){
     var isDefault = ramp.length === DEFAULT_RAMP.length && ramp.every(function(v,i){ return Math.abs(v-DEFAULT_RAMP[i]) < 1e-9; });
-    if (isDefault) return STRINGS[LANG].standardRamp;
+    if (isDefault) return (curCase === 'psj') ? (LANG === 'es' ? 'Estándar (0→60→85→100%)' : 'Standard (0→60→85→100%)') : STRINGS[LANG].standardRamp;
     var diffs = [];
     for (var i=0;i<ramp.length;i++){
       if (Math.abs(ramp[i]-1) > 1e-9) diffs.push(STRINGS[LANG].yearPrefix+(i+1)+':'+Math.round(ramp[i]*100)+'%');
@@ -1241,7 +1321,7 @@
     vw.title = STRINGS[LANG].reservas_warn_tip;
     vw.setAttribute('aria-label', STRINGS[LANG].reservas_warn_tip);
 
-    drawChart(r.fcf, r.capex, r.payback);
+    drawChart(r.fcf, r.capex0, r.payback);
     updateSummaryTable();
   }
 
@@ -1316,17 +1396,16 @@
     var sel = els.compYearSelect;
     var prevVal = sel.value;
     sel.innerHTML = '';
-    var optTotal = document.createElement('option');
-    optTotal.value = 'total';
-    optTotal.textContent = STRINGS[LANG].comp_option_total;
-    sel.appendChild(optTotal);
-    for (var i=1;i<=15;i++){
+    for (var i=1;i<=BASE.N_YEARS;i++){
       var opt = document.createElement('option');
       opt.value = String(i);
       opt.textContent = STRINGS[LANG].yearWord + ' ' + i;
       sel.appendChild(opt);
     }
-    sel.value = (prevVal && (prevVal === 'total' || (parseInt(prevVal,10)>=1 && parseInt(prevVal,10)<=15))) ? prevVal : 'total';
+    // Solo años puntuales (el proyecto completo está en el Resumen comparativo). Por defecto: el
+    // primer año de producción del caso (Año 2 en PSJ, que tiene dos años de construcción).
+    var defYear = (curCase === 'psj') ? '2' : '1';
+    sel.value = (prevVal && parseInt(prevVal,10)>=1 && parseInt(prevVal,10)<=BASE.N_YEARS) ? prevVal : defYear;
   }
   function fmtRampCell(v){ return localeNum(v,0,0) + '%'; }
   function fmtTonCell(v){ return localeNum(v/1e6,2,2) + ' Mt'; }
@@ -1336,9 +1415,7 @@
     return fmt(mn) + ' – ' + fmt(mx);
   }
   function renderComparativa(){
-    var selVal = els.compYearSelect.value || 'total';
-    var isTotal = selVal === 'total';
-    var yearIdx = isTotal ? null : (parseInt(selVal,10) - 1);
+    var yearIdx = parseInt(els.compYearSelect.value || '1', 10) - 1;
 
     SCN_KEYS.forEach(function(k){
       var s = scenarioStates[k];
@@ -1346,25 +1423,14 @@
       var cuArr = copperArr(s);
       var capArr = s.ramp.map(function(v){ return v*100; });
 
-      if (isTotal){
-        document.getElementById('comp_precio_'+k).textContent = rangeStr(s.precioCurve, function(v){ return fmtCurveVal(v,'precio'); });
-        document.getElementById('comp_ley_'+k).textContent = rangeStr(s.leyCurve, function(v){ return fmtCurveVal(v,'ley'); });
-        document.getElementById('comp_recup_'+k).textContent = rangeStr(s.recupCurve, function(v){ return fmtCurveVal(v,'recup'); });
-        document.getElementById('comp_capacidad_'+k).textContent = rangeStr(capArr, fmtRampCell);
-        var fcfCellTotal = document.getElementById('comp_fcf_'+k);
-        fcfCellTotal.textContent = rangeStr(r.fcf, fmtUsd);
-        fcfCellTotal.classList.toggle('critical', Math.min.apply(null, r.fcf) < 0);
-        document.getElementById('comp_ton_'+k).textContent = rangeStr(cuArr, fmtTonCu);
-      } else {
-        document.getElementById('comp_precio_'+k).textContent = fmtCurveVal(s.precioCurve[yearIdx], 'precio');
-        document.getElementById('comp_ley_'+k).textContent = fmtCurveVal(s.leyCurve[yearIdx], 'ley');
-        document.getElementById('comp_recup_'+k).textContent = fmtCurveVal(s.recupCurve[yearIdx], 'recup');
-        document.getElementById('comp_capacidad_'+k).textContent = fmtRampCell(capArr[yearIdx]);
-        var fcfCell = document.getElementById('comp_fcf_'+k);
-        fcfCell.textContent = fmtUsd(r.fcf[yearIdx]);
-        fcfCell.classList.toggle('critical', r.fcf[yearIdx] < 0);
-        document.getElementById('comp_ton_'+k).textContent = fmtTonCu(cuArr[yearIdx]);
-      }
+      document.getElementById('comp_precio_'+k).textContent = fmtCurveVal(s.precioCurve[yearIdx], 'precio');
+      document.getElementById('comp_ley_'+k).textContent = fmtCurveVal(s.leyCurve[yearIdx], 'ley');
+      document.getElementById('comp_recup_'+k).textContent = fmtCurveVal(s.recupCurve[yearIdx], 'recup');
+      document.getElementById('comp_capacidad_'+k).textContent = fmtRampCell(capArr[yearIdx]);
+      var fcfCell = document.getElementById('comp_fcf_'+k);
+      fcfCell.textContent = fmtUsd(r.fcf[yearIdx]);
+      fcfCell.classList.toggle('critical', r.fcf[yearIdx] < 0);
+      document.getElementById('comp_ton_'+k).textContent = fmtTonCu(cuArr[yearIdx]);
     });
   }
   els.compYearSelect.addEventListener('change', renderComparativa);
@@ -1470,7 +1536,7 @@
   // agregó la provisión de cierre de mina (Cordillera_Cu_Model_cierre_mina.xlsx / _scenarios_v2.xlsx).
   // Si el archivo sincronizado no la tiene, se conserva el 10% por defecto de esta calculadora
   // en vez de hacer fallar todo el sync por un solo named range ausente.
-  var OPTIONAL_NAMED_FIELDS = { Tasa_Provision_Cierre: 'TASA_CIERRE' };
+  var OPTIONAL_NAMED_FIELDS = { Tasa_Provision_Cierre: 'TASA_CIERRE', CAPEX_Pct_Ano0: 'CAPEX_PCT0' };
   // Hoja "Scenarios": tabla de shocks en columnas C/D/E/F = Base/Optimista/Pesimista/Personalizado.
   var SCENARIO_COLS = { base: 'C', optimista: 'D', pesimista: 'E', personalizado: 'F' };
   // Las FILAS de la hoja Scenarios NO son fijas: el usuario (o una edición nuestra) le agrega o
@@ -1487,7 +1553,7 @@
   var SECTION_VALORES = 'VALORES RESULTANTES DEL ESCENARIO';
   var BLOCK_HEADERS = { base: '1. BASE', optimista: '2. OPTIMISTA', pesimista: '3. PESIMISTA', personalizado: '4. PERSONALIZADO' };
   var RAMP_LABEL = 'Capacidad de Planta en %';
-  var RAMP_COLS = ['C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q'];
+  var RAMP_COLS = ['C','D','E','F','G','H','I','J','K','L','M','N','O','P','Q','R'];
 
   var lastSync = null;      // { fileName, when } tras un import exitoso
   var lastSyncErrorObj = null; // { key, detail } tras un import fallido
@@ -1539,7 +1605,7 @@
     return null;
   }
 
-  function readScenarioSheet(wb){
+  function readScenarioSheet(wb, nYears){
     var ws = wb.Sheets['Scenarios'];
     if (!ws) throw { key: 'sync_err_generic' };
     var range = sheetRowRange(ws);
@@ -1575,7 +1641,7 @@
       var rampRow = findRowStartingWith(ws, RAMP_LABEL, headerRow, headerRow + 20);
       if (!rampRow) throw { key: 'sync_err_ramp', detail: k };
       var ramp = [];
-      for (var i=0;i<15;i++){
+      for (var i=0;i<nYears;i++){
         ramp.push(readCellNumber(ws, RAMP_COLS[i]+rampRow, 'sync_err_ramp', k));
       }
       ramps[k] = ramp;
@@ -1596,9 +1662,17 @@
       var v = getNamedCellOptional(wb, excelName);
       if (v != null) newBase[OPTIONAL_NAMED_FIELDS[excelName]] = v;
     });
-    newBase.N_YEARS = 15; // simplificación fija de esta calculadora, no se lee del Excel
+    // Horizonte: 15 años (Años 1-15) en el modelo Cordillera; 16 (2 de construcción + 15 de operación)
+    // en el modelo PSJ nuevo, que se reconoce porque Cash Flow trae la columna "Año 16".
+    var cfWs = wb.Sheets['Cash Flow'];
+    var hasY16 = !!(cfWs && cfWs['R5'] && /16/.test(String(cfWs['R5'].v)));
+    newBase.N_YEARS = hasY16 ? 16 : 15;
+    // Si el Excel trae CAPEX_Pct_Ano0 es el modelo con cronograma de construcción (CAPEX en Años 0-1
+    // y costos fijos solo con producción); si no, el modelo anterior (todo el CAPEX en el Año 0).
+    newBase.FIJO_SOLO_PROD = (getNamedCellOptional(wb, 'CAPEX_Pct_Ano0') != null);
+    if (!newBase.FIJO_SOLO_PROD) newBase.CAPEX_PCT0 = 1;
 
-    var scn = readScenarioSheet(wb);
+    var scn = readScenarioSheet(wb, newBase.N_YEARS);
     var newPresets = {};
     // El Excel todavía guarda Precio/Ley/Recuperación como un shock único (%) por escenario en
     // la sección SUPUESTOS POR ESCENARIO (no las curvas año a año, que viven en otra sección de
@@ -1610,9 +1684,9 @@
         toneladasShock: scn.shocks[k].toneladasShock,
         capexShock: scn.shocks[k].capexShock, opexShock: scn.shocks[k].opexShock,
         wacc: newBase.WACC, ramp: scn.ramps[k].slice(),
-        precioCurve: flatCurve(newBase.PRECIO * (1 + scn.shocks[k].precioShock)),
-        leyCurve: flatCurve(newBase.LEY*100 * (1 + scn.shocks[k].leyShock)),
-        recupCurve: flatCurve(newBase.RECUP*100 * (1 + scn.shocks[k].recupShock))
+        precioCurve: flatCurve(newBase.PRECIO * (1 + scn.shocks[k].precioShock), newBase.N_YEARS),
+        leyCurve: flatCurve(newBase.LEY*100 * (1 + scn.shocks[k].leyShock), newBase.N_YEARS),
+        recupCurve: flatCurve(newBase.RECUP*100 * (1 + scn.shocks[k].recupShock), newBase.N_YEARS)
       };
     });
 
@@ -1675,11 +1749,43 @@
   });
 
   // ---------- idioma ----------
+  // Adapta al caso activo los textos que nombran el proyecto (la plantilla base está escrita
+  // para Cordillera; PSJ reemplaza el nombre y el archivo de Excel).
+  function caseText(key, txt){
+    if (curCase === 'cordillera') return txt;
+    var c = CASES[curCase];
+    if (key === 'subtitle'){
+      return LANG === 'es'
+        ? 'Simulá el proyecto ' + c.name + ' con tus propios parámetros — capacidad de planta, precio, ley y recuperación año a año, CAPEX, OPEX y tasa de impuesto — y mirá en vivo el VAN, la TIR y el Payback.'
+        : 'Simulate the ' + c.name + ' project with your own parameters — plant capacity, price, grade and recovery year by year, CAPEX, OPEX and the tax rate — and watch the NPV, IRR and Payback update live.';
+    }
+    if (curCase === 'psj' && key === 'chart_hint')
+      return LANG === 'es' ? 'Años 0 y 1: CAPEX (50 % cada año) más costos fijos de mano de obra y G&A, sin producción' : 'Years 0 and 1: CAPEX (50% each year) plus fixed labor and G&A costs, no production';
+    if (curCase === 'psj' && key === 'chart_note')
+      return LANG === 'es'
+        ? 'Construcción en los años 0-1 y producción desde el año 2 con el ramp-up de abajo. 15 años de operación (años 2-16, horizonte total de 16 años) — igual que en el modelo de Excel.'
+        : 'Construction in years 0-1 and production from year 2 with the ramp-up below. 15 operating years (years 2-16, 16-year horizon in total) — same as in the Excel model.';
+    if (curCase === 'psj'){
+      txt = txt.replace(/Año 15/g,'Año 16').replace(/Year 15/g,'Year 16')
+        .replace(/vida de mina fija en 15 años/g,'15 años de operación (años 2-16)')
+        .replace(/mine life fixed at 15 years/g,'15 operating years (years 2-16)')
+        .replace(/en 15 años vs\./g,'en los 15 años de operación vs.')
+        .replace(/in 15 years vs\./g,'in the 15 operating years vs.')
+        .replace(/los 15 años\)/g,'los 16 años: 2 de construcción + 15 de operación)')
+        .replace(/all 15 years\)/g,'all 16 years: 2 of construction + 15 of operation)')
+        .replace(/antes de los 15 años/g,'antes de los 15 años de operación')
+        .replace(/before year 15/g,'before the 15 operating years');
+    }
+    return txt.replace(/Cordillera_Cu_Model\.xlsx/g, c.file).replace(/Cordillera Cu/g, c.name);
+  }
   function applyStaticText(){
     document.querySelectorAll('[data-i18n]').forEach(function(el){
-      var txt = STRINGS[LANG][el.getAttribute('data-i18n')];
-      if (txt !== undefined) el.textContent = txt;
+      var key = el.getAttribute('data-i18n');
+      var txt = STRINGS[LANG][key];
+      if (txt !== undefined) el.textContent = caseText(key, txt);
     });
+    document.getElementById('caseNote').textContent = CASES[curCase].note[LANG];
+    document.title = (LANG === 'es' ? 'Calculadora ' : 'Calculator ') + CASES[curCase].name;
   }
 
   function updateBaseVals(){
@@ -1711,6 +1817,22 @@
     renderSyncStatus();
   }
 
+  function applyCase(key){
+    if (!CASES[key]) return;
+    curCase = key;
+    var b = CASES[key].BASE;
+    Object.keys(b).forEach(function(k){ BASE[k] = b[k]; });
+    DEFAULT_RAMP = CASES[key].ramp.slice();
+    PRESETS = makePresets();
+    SCN_KEYS.forEach(function(k){ scenarioStates[k] = cloneState(PRESETS[k]); });
+    state = scenarioStates[currentScenario];
+    lastSync = null; lastSyncErrorObj = null;
+    setLanguage(LANG);
+  }
+  document.getElementById('caseSelect').addEventListener('change', function(e){
+    applyCase(e.target.value);
+  });
+
   document.getElementById('langSelect').addEventListener('change', function(e){
     setLanguage(e.target.value);
   });
@@ -1718,5 +1840,3 @@
   setLanguage('es');
 })();
 </script>
-
-</body></html>
